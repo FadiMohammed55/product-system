@@ -6,171 +6,239 @@
 
 @section('content')
 
-<div class="dashboard-header">
-
-    <div>
-        <h2>Welcome back, {{ Auth::user()->name }} 👋</h2>
-
-        <p>
-            Here's what's happening with your store today
-        </p>
-    </div>
-
-</div>
-
-<div class="stats-grid">
-
-    <div class="stat-card">
-
-        <div class="stat-icon">
-            📦
-        </div>
+    <div class="dashboard-header">
 
         <div>
-            <p class="stat-label">
-                Products
+            <h2>Welcome back, {{ Auth::user()->name }} 👋</h2>
+
+            <p>
+                Here's what's happening with your store today
             </p>
-
-            <h3>
-                {{ $productsCount }}
-            </h3>
         </div>
 
     </div>
 
-    <div class="stat-card">
+    <div class="stats-grid">
 
-        <div class="stat-icon">
-            🗂️
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                📦
+            </div>
+
+            <div>
+                <p class="stat-label">
+                    Products
+                </p>
+
+                <h3>
+                    {{ $productsCount }}
+                </h3>
+            </div>
+
         </div>
 
-        <div>
-            <p class="stat-label">
-                Categories
-            </p>
+        <div class="stat-card">
 
-            <h3>
-                {{ $categoriesCount }}
-            </h3>
+            <div class="stat-icon">
+                🗂️
+            </div>
+
+            <div>
+                <p class="stat-label">
+                    Categories
+                </p>
+
+                <h3>
+                    {{ $categoriesCount }}
+                </h3>
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                👤
+            </div>
+
+            <div>
+                <p class="stat-label">
+                    Customers
+                </p>
+
+                <h3>
+                    {{ $customersCount }}
+                </h3>
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                🛒
+            </div>
+
+            <div>
+                <p class="stat-label">
+                    Orders
+                </p>
+
+                <h3>
+                    {{ $ordersCount }}
+                </h3>
+            </div>
+
         </div>
 
     </div>
 
-    <div class="stat-card">
+    <div class="dashboard-section">
 
-        <div class="stat-icon">
-            👤
+        <div class="section-header">
+
+            <div>
+                <h3>Recent Products</h3>
+                <p>Your latest added products</p>
+            </div>
+
+            <a href="/admin/products" class="btn btn-primary">
+                View All
+            </a>
+
         </div>
 
-        <div>
-            <p class="stat-label">
-                Customers
-            </p>
+        <div class="table-wrapper">
 
-            <h3>
-                0
-            </h3>
-        </div>
+            <table>
 
-    </div>
+                <thead>
 
-    <div class="stat-card">
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Rating</th>
+                    </tr>
 
-        <div class="stat-icon">
-            🛒
-        </div>
+                </thead>
 
-        <div>
-            <p class="stat-label">
-                Orders
-            </p>
+                <tbody>
 
-            <h3>
-                0
-            </h3>
-        </div>
+                    @forelse ($latestProducts as $product)
 
-    </div>
+                        <tr>
+                            <td>
+                                <div class="product-cell">
 
-</div>
+                                    @if ($product->image)
 
-<div class="dashboard-section">
+                                        <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="product-image">
 
-    <div class="section-header">
+                                    @else
 
-        <div>
-            <h3>Recent Products</h3>
-            <p>Your latest added products</p>
-        </div>
+                                        <div class="product-placeholder">
+                                            📦
+                                        </div>
 
-        <a href="/admin/products" class="btn btn-primary">
-            View All
-        </a>
+                                    @endif
 
-    </div>
+                                    <span>{{ $product->name }}</span>
 
-    <div class="table-wrapper">
-
-        <table>
-
-            <thead>
-
-                <tr>
-                    <th>Product</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Rating</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                @forelse ($latesProducts as $product)
-
-                <tr>
-                    <td>
-                        <div class="product-cell">
-
-                            @if ($product->image)
-
-                                <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="product-image">
-
-                            @else
-
-                                <div class="product-placeholder">
-                                    📦
                                 </div>
+                            </td>
+                            <td>{{ $product->category->name }}</td>
+                            <td>{{ $product->price }}{{ $product->currency }}</td>
+                            <td>⭐ {{ $product->rating }}</td>
+                        </tr>
 
-                            @endif
+                    @empty
 
-                            <span>{{ $product->name }}</span>
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    No Products Found
+                                </div>
+                            </td>
+                        </tr>
 
-                        </div>
-                    </td>
-                    <td>{{ $product->category->name }}</td>
-                    <td>{{ $product->price }}{{ $product->currency }}</td>
-                    <td>⭐ {{ $product->rating }}</td>
-                </tr>
+                    @endforelse
 
-                @empty
+                </tbody>
 
-                <tr>
-                    <td colspan="4">
-                        <div class="empty-state">
-                            No Products Found
-                        </div>
-                    </td>
-                </tr>
+            </table>
 
-                @endforelse
+        </div>
 
-            </tbody>
+        <div class="card">
 
-        </table>
+            <div class="card-header">
+
+                <div>
+                    <h2>Recent Orders</h2>
+                    <p>Latest customer orders</p>
+                </div>
+
+                <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">
+                    View All
+                </a>
+
+            </div>
+
+            @if ($latestOrders->isEmpty())
+
+                <div class="empty-state">
+                    <h3>No Orders Yet</h3>
+                    <p>Customer orders will apper here</p>
+                </div>
+
+            @else
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Order #</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach ($latestOrders as $order)
+
+                                <tr>
+                                    <td>#{{ $order->id }}</td>
+                                    <td>{{ $order->user->name }}</td>
+                                    <td>{{ number_format($order->total, 2) }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ $order->status }}">
+                                            {{ ucfirst($order->status) }}
+                                        </span>
+                                    </td>
+                                    <td>{{ $order->created_at->format('Y-m-d H:i') }}</td>
+                                </tr>
+
+                            @endforeach
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            @endif
+
+        </div>
 
     </div>
-
-</div>
 
 @endsection

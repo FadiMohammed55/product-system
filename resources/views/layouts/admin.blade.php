@@ -52,6 +52,12 @@
                     <span>Categories</span>
                 </a>
 
+                <a href="{{ route('admin.orders.index') }}"
+                    class="{{ request()->is('admin.orders*') ? 'active' : '' }}">
+                    <span class="nav-icon">📦</span>
+                    <span>Orders</span>
+                </a>
+
                 <p class="nav-section-title">STORE</p>
 
                 <a href="{{ route('products.index') }}" target="_blank">

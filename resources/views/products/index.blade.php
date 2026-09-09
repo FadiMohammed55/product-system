@@ -1,68 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.customer')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products</title>
-</head>
+@section('title', 'Products')
 
-<body>
+@section('page-title', 'Products')
 
-    <h1>Products</h1>
-    <p>Welcome, {{ Auth::user()->name }}</p>
+@section('content')
 
-    <form action="/logout" method="post">
-        @csrf
-        <button type="submit">
-            Logout
-        </button>
-    </form>
+    <div class="page-header">
 
-    <br>
+        <div>
+            <h1>Products</h1>
+            <p>Browse our available products</p>
+        </div>
+
+        <a href="{{ route('cart.index') }}" class="btn btn-primary">
+            🛒 Cart
+        </a>
+
+    </div>
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
 
     @if ($products->isEmpty())
-        <p>No products available</p>
+
+        <div class="empty-state">
+            <h2>No Products available</h2>
+            <p>There are currently no products to display</p>
+        </div>
+
     @else
 
-        <table border="1" cellpadding="10">
+        <div class="product-grid">
 
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Currency</th>
-                    <th>Rating</th>
-                </tr>
-            </thead>
+            @foreach ($products as $product)
 
-            <tbody>
-                @foreach ($products as $product)
-                    <tr>
-                        <td>{{ $product->id }}</td>
-                        <td>
-                            @if ($product->image)
-                                <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" width="100">
-                            @else
+                <div class="product-card">
+
+                    <div class="product-image">
+
+                        @if ($product->image)
+                            <img src="{{ asset($product->image) }}" alt="{{ $product->name }}">
+                        @else
+                            <div class="no-image">
                                 No Image
-                            @endif
-                        </td>
-                        <td>{{ $product->name }}</td>
-                        <td>{{ $product->category->name }}</td>
-                        <td>{{ $product->price }}</td>
-                        <td>{{ $product->currency }}</td>
-                        <td>{{ $product->rating }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
+                            </div>
+                        @endif
 
-        </table>
+                    </div>
+
+                    <div class="product-info">
+
+                        <span class="product-category">
+                            {{ $product->category->name }}
+                        </span>
+
+                        <h3>{{ $product->name }}</h3>
+
+                        <div class="product-rating">
+                            ★ {{ number_format($product->rating, 1) }}/5
+                        </div>
+
+                        <div class="product-price">
+                            {{ number_format($product->price, 2) }}
+                            {{ $product->currency }}
+                        </div>
+
+                        <form action="{{ route('cart.store', $product) }}" method="post">
+                            @csrf
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Add to Cart
+                            </button>
+                        </form>
+
+                    </div>
+
+                </div>
+
+            @endforeach
+
+        </div>
 
     @endif
 
-</body>
-
-</html>
+@endsection
