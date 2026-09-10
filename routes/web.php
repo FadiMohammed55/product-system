@@ -29,7 +29,7 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('customer')->group(function () {
 
     // Customer Products
     Route::get('/products', [ProductController::class, 'index'])
