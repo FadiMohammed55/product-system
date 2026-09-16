@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Dashboard')</title>
+    <title>@yield('title', 'Admin Dashboard') - Product System</title>
     @vite(['resources/css/admin.css'])
 </head>
 
@@ -12,62 +12,56 @@
 
     <div class="admin-layout">
 
-        {{-- Mobile Overlay --}}
         <div class="sidebar-overlay"></div>
 
-        {{-- Sidebar --}}
-        <aside class="sidebar">
+        <aside class="sidebar" id="adminSidebar">
 
             <div class="sidebar-header">
 
-                <div class="brand-icon">
-                    PS
-                </div>
-
-                <div class="brand-text">
-                    <h2>Product System</h2>
-                    <span>Admin Panel</span>
-                </div>
+                <a href="{{ route('admin.dashboard') }}" class="brand">
+                    <span class="brand-icon">
+                        PS
+                    </span>
+                    <span class="brand-text">
+                        <strong>Product System</strong>
+                        <small>Admin Panel</small>
+                    </span>
+                </a>
 
             </div>
 
             <nav class="sidebar-nav">
 
-                <p class="nav-section-title">MAIN MENU</p>
+                <p class="nav-section-title">
+                    MAIN MENU
+                </p>
 
-                <a href="{{ route('admin.dashboard') }}" class="{{ request()->is('admin/dashboard') ? 'active' : '' }}">
+                <a href="{{ route('admin.dashboard') }}"
+                    class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                     <span class="nav-icon">⌂</span>
                     <span>Dashboard</span>
                 </a>
 
                 <a href="{{ route('admin.products.index') }}"
-                    class="{{ request()->is('admin/products*') ? 'active' : '' }}">
+                    class="{{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
                     <span class="nav-icon">▣</span>
                     <span>Products</span>
                 </a>
 
                 <a href="{{ route('admin.categories.index') }}"
-                    class="{{ request()->is('admin/categories*') ? 'active' : '' }}">
+                    class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                     <span class="nav-icon">▤</span>
                     <span>Categories</span>
                 </a>
 
                 <a href="{{ route('admin.orders.index') }}"
-                    class="{{ request()->is('admin.orders*') ? 'active' : '' }}">
-                    <span class="nav-icon">📦</span>
+                    class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+                    <span class="nav-icon">◫</span>
                     <span>Orders</span>
-                </a>
-
-                <p class="nav-section-title">STORE</p>
-
-                <a href="{{ route('products.index') }}" target="_blank">
-                    <span class="nav-icon">◈</span>
-                    <span>Customer Products</span>
                 </a>
 
             </nav>
 
-            {{-- Sidebar Bottom --}}
             <div class="sidebar-bottom">
 
                 <div class="admin-profile">
@@ -84,7 +78,6 @@
                 </div>
 
                 <form action="{{ route('logout') }}" method="post">
-
                     @csrf
 
                     <button type="submit" class="sidebar-logout">
@@ -98,67 +91,80 @@
 
         </aside>
 
-        {{-- Main Content --}}
         <main class="main-content">
 
-            {{-- Topbar --}}
             <header class="topbar">
 
                 <div class="topbar-left">
 
-                    <button type="button" class="sidebar-toggle" aria-label="Toggle sidebar">
+                    <button type="button" class="sidebar-toggle" aria-label="Toggle sidebar"
+                        aria-controls="adminSidebar" aria-expanded="false">
                         ☰
                     </button>
 
-                    <div>
+                    <div class="page-heading">
                         <h1>@yield('page-title', 'Dashboard')</h1>
-                        <p class="topbar-subtitle">Manage your store</p>
+                        <p class="topbar-subtitle">Manage Your Store</p>
                     </div>
 
                 </div>
 
-                <div class="user-info">
+                <div class="topbar-user">
 
-                    <div class="topbar-user">
+                    <div class="topbar-avatar">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
 
-                        <div class="topbar-avatar">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                        </div>
-
-                        <div>
-                            <strong>{{ Auth::user()->name }}</strong>
-                            <span>Admin</span>
-                        </div>
-
+                    <div class="topbar-user-details">
+                        <strong>{{ Auth::user()->name }}</strong>
+                        <span>Administrator</span>
                     </div>
 
                 </div>
 
             </header>
 
-            {{-- Page Content --}}
             <section class="content">
+
                 @yield('content')
+
             </section>
 
         </main>
 
     </div>
 
-    {{-- Sidebar JavaScript --}}
     <script>
-        const sidebar = document.querySelector('.sidebar');
-        const toggleButton = document.querySelector('.sidebar-toggle');
-        const overlay = document.querySelector('.sidebar-overlay');
+        document.addEventListener('DOMContentLoaded', () => {
 
-        toggleButton.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        });
+            const sidebar = document.querySelector('.sidebar');
+            const toggleButton = document.querySelector('.sidebar-toggle');
+            const overlay = document.querySelector('.sidebar-overlay');
 
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
+            if (!sidebar || !toggleButton || !overlay) {
+                return;
+            }
+
+            const closeSidebar = () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+                toggleButton.setAttribute('aria-expanded', 'false');
+            };
+
+            toggleButton.addEventListener('click', () => {
+                const isOpen = sidebar.classList.toggle('open');
+                overlay.classList.toggle('show', isOpen);
+                toggleButton.setAttribute('aria-expanded', String(isOpen));
+            });
+
+            overlay.addEventListener('click', closeSidebar);
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 900) {
+                    closeSidebar();
+                }
+            });
+
         });
     </script>
 

@@ -6,7 +6,7 @@
 
 @section('content')
 
-    <div class="dashboard-header">
+    <section class="dashboard-header">
 
         <div class="dashboard-header-content">
 
@@ -14,7 +14,9 @@
 
             <h2>
                 Welcome back, {{ Auth::user()->name }}
-                <span class="welcome-icon">👋</span>
+                <span class="welcome-icon" aria-hidden="true">
+                    👋
+                </span>
             </h2>
 
             <p>Here's what's happening with your store today</p>
@@ -23,118 +25,104 @@
 
         <div class="dashboard-header-action">
             <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
-                <span>+</span>
-                Add Product
+                <span aria-hidden="true">+</span>
+                <span>Add Product</span>
             </a>
         </div>
 
-    </div>
+    </section>
 
-    <div class="stats-grid">
+    <section class="stats-grid">
 
-        <div class="stat-card">
+        <article class="stat-card">
 
             <div class="stat-card-top">
-
-                <div class="stat-icon">
+                <div class="stat-icon" aria-hidden="true">
                     📦
                 </div>
-
                 <span class="stat-trend">
                     Store
                 </span>
-
             </div>
 
             <div class="stat-content">
 
                 <p class="stat-label">Products</p>
 
-                <h3> {{ $productsCount }} </h3>
+                <h3>{{ $productsCount }}</h3>
 
                 <a href="{{ route('admin.products.index') }}" class="stat-link">
-                    View products →
+                    View Products →
                 </a>
 
             </div>
 
-        </div>
+        </article>
 
-        <div class="stat-card">
+        <article class="stat-card">
 
             <div class="stat-card-top">
-
-                <div class="stat-icon">
+                <div class="stat-icon" aria-hidden="true">
                     🗂️
                 </div>
-
                 <span class="stat-trend">
                     Store
                 </span>
-
             </div>
 
             <div class="stat-content">
 
-                <p class="stat-label"> Categories </p>
+                <p class="stat-label">Categories</p>
 
-                <h3> {{ $categoriesCount }} </h3>
+                <h3>{{ $categoriesCount }}</h3>
 
                 <a href="{{ route('admin.categories.index') }}" class="stat-link">
-                    View categories →
+                    View Categories →
                 </a>
 
             </div>
 
-        </div>
+        </article>
 
-        <div class="stat-card">
+        <article class="stat-card">
 
             <div class="stat-card-top">
-
-                <div class="stat-icon">
+                <div class="stat-icon" aria-hidden="true">
                     👤
                 </div>
-
                 <span class="stat-trend">
                     Users
                 </span>
-
             </div>
 
             <div class="stat-content">
 
                 <p class="stat-label">Customers</p>
 
-                <h3> {{ $customersCount }} </h3>
+                <h3>{{ $customersCount }}</h3>
 
-                <span class="stat-link stat-link-disabled">
-                    Registered customers
-                </span>
+                <span class="stat-link stat-link-disabled">Registered Customers</span>
 
             </div>
 
-        </div>
+        </article>
 
-        <div class="stat-card">
+        <article class="stat-card">
 
             <div class="stat-card-top">
-
-                <div class="stat-icon">
+                <div class="stat-icon" aria-hidden="true">
                     🛒
                 </div>
-
                 <span class="stat-trend">
                     Sales
                 </span>
-
             </div>
 
             <div class="stat-content">
 
                 <p class="stat-label">Orders</p>
 
-                <h3> {{ $ordersCount }} </h3>
+                <h3>{{ $ordersCount }}</h3>
 
                 <a href="{{ route('admin.orders.index') }}" class="stat-link">
                     View orders →
@@ -142,18 +130,18 @@
 
             </div>
 
-        </div>
+        </article>
 
-    </div>
+    </section>
 
-    <div class="dashboard-section">
+    <section class="dashboard-section">
 
         <div class="section-header">
 
             <div>
                 <span class="section-eyebrow">INVENTORY</span>
                 <h3>Recent Products</h3>
-                <p>Your latest added products</p>
+                <p>your latest added products</p>
             </div>
 
             <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
@@ -162,14 +150,13 @@
 
         </div>
 
-
-        <div class="card table-card">
+        <div class="table-card">
 
             @if ($latestProducts->isEmpty())
 
                 <div class="empty-state">
 
-                    <div class="empty-state-icon">
+                    <div class="empty-state-icon" aria-hidden="true">
                         📦
                     </div>
 
@@ -205,36 +192,37 @@
                             @foreach ($latestProducts as $product)
 
                                 <tr>
-
                                     <td>
                                         <div class="product-cell">
-
                                             @if ($product->image)
                                                 <img src="{{ asset($product->image) }}" alt="{{ $product->name }}"
                                                     class="product-image">
                                             @else
-                                                <div class="product-placeholder">
+                                                <div class="product-placeholder" aria-hidden="true">
                                                     📦
                                                 </div>
                                             @endif
-
                                             <div class="product-info">
                                                 <strong>{{ $product->name }}</strong>
                                                 <span>Product #{{ $product->id }}</span>
                                             </div>
-
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="category-badge">{{ $product->category->name }}</span>
+                                        <span class="category-badge">
+                                            {{ $product->category->name }}
+                                        </span>
                                     </td>
                                     <td>
-                                        <strong class="price">{{ number_format($product->price, 2) }}</strong>
-                                        <span class="currency">{{ $product->currency }}</span>
+                                        <strong class="price">
+                                            {{ number_format($product->price, 2) }}
+                                        </strong>
+                                        <span class="currency">
+                                            {{ $product->currency }}
+                                        </span>
                                     </td>
                                     <td>
-                                        <span class="rating">
-                                            <span>★</span>
+                                        <span class="rating">★
                                             {{ number_format($product->rating, 1) }}
                                         </span>
                                     </td>
@@ -252,9 +240,9 @@
 
         </div>
 
-    </div>
+    </section>
 
-    <div class="dashboard-section">
+    <section class="dashboard-section">
 
         <div class="section-header">
 
@@ -270,17 +258,18 @@
 
         </div>
 
-        <div class="card table-card">
+        <div class="table-card">
 
             @if ($latestOrders->isEmpty())
 
                 <div class="empty-state">
 
-                    <div class="empty-state-icon">
+                    <div class="empty-state-icon" aria-hidden="true">
                         🛒
                     </div>
 
                     <h3>No Orders Yet</h3>
+
                     <p>Customer orders will appear here</p>
 
                 </div>
@@ -307,36 +296,39 @@
 
                             @foreach ($latestOrders as $order)
 
-                                <tr>
-                                    <td>
-                                        <a href="{{ route('admin.orders.show', $order) }}" class="order-id">
-                                            #{{ $order->id }}
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <div class="customer-cell">
-
-                                            <div class="customer-avatar">
-                                                {{ strtoupper(substr($order->user->name, 0, 1)) }}
-                                            </div>
-
-                                            <span>{{ $order->user->name }}</span>
-
+                            <tr>
+                                <td>
+                                    <a href="{{ route('admin.orders.show', $order) }}" class="order-id">
+                                        #{{ $order->id }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="customer-cell">
+                                        <div class="customer-avatar">
+                                            {{ strtoupper(substr($order->user->name, 0, 1)) }}
                                         </div>
-                                    </td>
-                                    <td>
-                                        <strong class="price">{{ number_format($order->total, 2) }}</strong>
-                                    </td>
-                                    <td>
-                                        <span class="status-badge status-{{ $order->status }}">
-                                            <span class="status-dot"></span>
-                                            {{ ucfirst($order->status) }}
+                                        <span class="customer-name">
+                                            {{ $order->user->name }}
                                         </span>
-                                    </td>
-                                    <td>
-                                        <span class="date">{{ $order->created_at->format('Y-m-d H:i') }}</span>
-                                    </td>
-                                </tr>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong class="price">
+                                        {{ number_format($order->total, 2) }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ $order->status }}">
+                                        <span class="status-dot" aria-hidden="true"></span>
+                                        {{ ucfirst($order->status) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="date">
+                                        {{ $order->created_at->format('Y-m-d H:i') }}
+                                    </span>
+                                </td>
+                            </tr>
 
                             @endforeach
 
@@ -350,6 +342,6 @@
 
         </div>
 
-    </div>
+    </section>
 
 @endsection

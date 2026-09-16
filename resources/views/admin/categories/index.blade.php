@@ -6,65 +6,120 @@
 
 @section('content')
 
-    <h2>Categories Management</h2>
+    <div class="page-header">
 
-    <p>Here you can manage all categories</p>
+        <div>
+            <span class="section-eyebrow">CATALOG</span>
+            <h1>Categories</h1>
+            <p>Organize your products into categories</p>
+        </div>
 
-    <a href="{{ route('admin.categories.create') }}">
-        Add Category
-    </a>
+        <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
+            <span aria-hidden="true">+</span>
+            <span>Add Category</span>
+        </a>
 
-    <hr>
+    </div>
+
+    @if (session('success'))
+
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+
+    @endif
 
     @if ($categories->count())
 
-        <table>
+        <div class="table-card">
 
-            <thead>
+            <div class="table-wrapper">
 
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Actions</th>
-                </tr>
+                <table>
 
-            </thead>
+                    <thead>
 
-            <tbody>
+                        <tr>
+                            <th>ID</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
 
-                @foreach ($categories as $category)
+                    </thead>
 
-                    <tr>
-                        <td>{{ $category->id }}</td>
-                        <td>{{ $category->name }}</td>
-                        <td>
-                            <a href="{{ route('admin.categories.edit', $category) }}">
-                                Edit
-                            </a>
+                    <tbody>
 
-                            <form action="{{ route('admin.categories.destroy', $category) }}" method="post"
-                                style="display: inline;">
+                        @foreach ($categories as $category)
 
-                                @csrf
-                                @method('DELETE')
+                            <tr>
+                                <td>
+                                    <span class="product-id">
+                                        #{{ $category->id }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="category-table-cell">
 
-                                <button type="submit">
-                                    Delete
-                                </button>
+                                        <div class="category-icon" aria-hidden="true">
+                                            ▤
+                                        </div>
 
-                            </form>
-                        </td>
-                    </tr>
+                                        <div class="category-info">
+                                            <strong>{{ $category->name }}</strong>
+                                            <span>Category #{{ $category->id }}</span>
+                                        </div>
 
-                @endforeach
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="{{ route('admin.categories.edit', ['category' => $category->id]) }}"
+                                            class="btn btn-secondary">
+                                            Edit
+                                        </a>
+                                        <form action="{{ route('admin.categories.destroy', ['category' => $category->id]) }}"
+                                            method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
 
-            </tbody>
+                        @endforeach
 
-        </table>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
 
     @else
 
-        <p>No Categories Found</p>
+        <div class="table-card">
+
+            <div class="empty-state">
+
+                <div class="empty-state-icon" aria-hidden="true">
+                    ▤
+                </div>
+
+                <h2>No Categories Found</h2>
+
+                <p>Create your first category to organize your products</p>
+
+                <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
+                    Add Category
+                </a>
+
+            </div>
+
+        </div>
 
     @endif
 

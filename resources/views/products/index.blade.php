@@ -2,34 +2,40 @@
 
 @section('title', 'Products')
 
-@section('page-title', 'Products')
-
 @section('content')
 
-    <div class="page-header">
+    <div class="customer-page-header">
 
         <div>
             <h1>Products</h1>
             <p>Browse our available products</p>
         </div>
 
-        <a href="{{ route('cart.index') }}" class="btn btn-primary">
-            🛒 Cart
+        <a href="{{ route('cart.index') }}" class="store-btn store-btn-primary">
+            <span aria-hidden="true">🛒</span>
+            <span>Cart</span>
         </a>
 
     </div>
 
     @if (session('success'))
-        <div class="alert alert-success">
+        <div class="store-alert store-alert-success">
             {{ session('success') }}
         </div>
     @endif
 
     @if ($products->isEmpty())
 
-        <div class="empty-state">
-            <h2>No Products available</h2>
+        <div class="customer-empty-state">
+
+            <div class="customer-empty-icon" aria-hidden="true">
+                📦
+            </div>
+
+            <h2>No Products Available</h2>
+
             <p>There are currently no products to display</p>
+
         </div>
 
     @else
@@ -38,21 +44,21 @@
 
             @foreach ($products as $product)
 
-                <div class="product-card">
+                <article class="customer-product-card">
 
-                    <div class="product-image">
+                    <div class="customer-product-image">
 
                         @if ($product->image)
                             <img src="{{ asset($product->image) }}" alt="{{ $product->name }}">
                         @else
-                            <div class="no-image">
+                            <div class="customer-no-image">
                                 No Image
                             </div>
                         @endif
 
                     </div>
 
-                    <div class="product-info">
+                    <div class="customer-product-info">
 
                         <span class="product-category">
                             {{ $product->category->name }}
@@ -66,19 +72,24 @@
 
                         <div class="product-price">
                             {{ number_format($product->price, 2) }}
-                            {{ $product->currency }}
+                            <span class="product-currency">
+                                {{ $product->currency }}
+                            </span>
                         </div>
 
-                        <form action="{{ route('cart.store', $product) }}" method="post">
+                        <form action="{{ route('cart.store', ['product' => $product->id]) }}" method="post">
+
                             @csrf
-                            <button type="submit" class="btn btn-primary btn-block">
+
+                            <button type="submit" class="store-btn store-btn-primary store-btn-block">
                                 Add to Cart
                             </button>
+
                         </form>
 
                     </div>
 
-                </div>
+                </article>
 
             @endforeach
 

@@ -2,38 +2,40 @@
 
 @section('title', 'My Orders')
 
-@section('page-title', 'My Orders')
-
 @section('content')
 
-    <div class="page-header">
+    <div class="customer-page-header">
 
         <div>
             <h1>My Orders</h1>
-            <p>View your order history</p>
+            <p>View your orders history and track your purchases</p>
         </div>
 
-        <a href="{{ route('products.index') }}" class="btn btn-primary">
+        <a href="{{ route('products.index') }}" class="store-btn store-btn-primary">
             Continue Shopping
         </a>
 
     </div>
 
     @if (session('success'))
-        <div class="alert alert-success">
+        <div class="store-alert store-alert-success">
             {{ session('success') }}
         </div>
     @endif
 
     @if ($orders->isEmpty())
 
-        <div class="empty-state">
+        <div class="customer-empty-state">
+
+            <div class="customer-empty-icon">
+                📦
+            </div>
 
             <h2>No Orders Yet</h2>
 
             <p>You have not placed any orders yet</p>
 
-            <a href="{{ route('products.index') }}" class="btn btn-primary">
+            <a href="{{ route('products.index') }}" class="store-btn store-btn-primary">
                 Browse Products
             </a>
 
@@ -41,16 +43,16 @@
 
     @else
 
-        <div class="table-card">
+        <div class="customer-table-card">
 
-            <div class="table-wrapper">
+            <div class="customer-table-wrapper">
 
-                <table>
+                <table class="customer-table">
 
                     <thead>
 
                         <tr>
-                            <th>Order #</th>
+                            <th>Order</th>
                             <th>Date</th>
                             <th>Total</th>
                             <th>Status</th>
@@ -64,17 +66,30 @@
                         @foreach ($orders as $order)
 
                             <tr>
-                                <td>#{{ $order->id }}</td>
-                                <td>{{ $order->created_at->format('Y-m-d H:i') }}</td>
-                                <td>{{ number_format($order->total, 2) }}</td>
                                 <td>
-                                    <span class="status-badge status-{{ $order->status }}">
+                                    <strong>
+                                        #{{ $order->id }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    <span>
+                                        {{ $order->created_at->format('Y-m-d H:i') }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong>
+                                        {{ number_format($order->total, 2) }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    <span class="customer-status customer-status-{{ $order->status }}">
                                         {{ ucfirst($order->status) }}
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('orders.show', $order) }}" class="btn btn-secondary">
-                                        View
+                                    <a href="{{ route('orders.show', ['order' => $order->id]) }}"
+                                        class="store-btn store-btn-secondary">
+                                        View Order
                                     </a>
                                 </td>
                             </tr>

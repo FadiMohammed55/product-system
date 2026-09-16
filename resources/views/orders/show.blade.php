@@ -2,74 +2,135 @@
 
 @section('title', 'Order #' . $order->id)
 
-@section('page-title', 'Order #' . $order->id)
-
 @section('content')
 
-    <div class="page-header">
+    <div class="customer-page-header">
 
         <div>
             <h1>Order #{{ $order->id }}</h1>
             <p>Placed on {{ $order->created_at->format('Y-m-d H:i') }}</p>
         </div>
 
-        <a href="{{ route('orders.index') }}" class="btn btn-secondary">
-            Back to Orders
+        <a href="{{ route('orders.index') }}" class="store-btn store-btn-secondary">
+            ← Back to Orders
         </a>
 
     </div>
 
-    <div class="order-info-card">
+    <div class="customer-order-info">
 
-        <div>
-            <span>Order Status</span>
-            <strong class="status-badge status-{{ $order->status }}">
-                {{ ucfirst($order->status) }}
+        <div class="customer-order-stat">
+
+            <span>
+                Order Status
+            </span>
+
+            <strong>
+                <span class="customer-status customer-status-{{ $order->status }}">
+                    {{ ucfirst($order->status) }}
+                </span>
             </strong>
+
         </div>
 
-        <div>
-            <span>Order Total</span>
-            <strong>{{ number_format($order->total, 2) }}</strong>
+        <div class="customer-order-stat">
+
+            <span>
+                Order Total
+            </span>
+
+            <strong>
+                {{ number_format($order->total, 2) }}
+            </strong>
+
         </div>
 
     </div>
 
-    <div class="table-card">
+    <div class="customer-page-section">
 
-        <div class="table-wrapper">
+        <div class="customer-section-heading">
 
-            <table>
+            <div>
+                <span>PURCHASE</span>
+                <H2>Order Items</H2>
+                <p>Products included in this order</p>
+            </div>
 
-                <thead>
+        </div>
 
-                    <tr>
-                        <th>Product</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Subtotal</th>
-                    </tr>
+        <div class="customer-table-card">
 
-                </thead>
+            <div class="customer-table-wrapper">
 
-                <tbody>
+                <table class="customer-table">
 
-                    @foreach ($order->items as $item)
+                    <thead>
 
                         <tr>
-                            <td>{{ $item->product->name }}</td>
-                            <td>{{ $item->product->category->name }}</td>
-                            <td>{{ number_format($item->price, 2) }}</td>
-                            <td>{{ $item->quantity }}</td>
-                            <td>{{ number_format($item->price * $item->quantity, 2) }}</td>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
                         </tr>
 
-                    @endforeach
+                    </thead>
 
-                </tbody>
+                    <tbody>
 
-            </table>
+                        @foreach ($order->items as $item)
+
+                            <tr>
+                                <td>
+                                    <div class="cart-product">
+                                        @if ($item->product->image)
+                                            <img src="{{ asset($item->product->image) }}" alt="{{ $item->product->name }}"
+                                                class="cart-product-image">
+                                        @else
+                                            <div class="customer-empty-icon" aria-hidden="true">
+                                                📦
+                                            </div>
+                                        @endif
+                                        <div class="cart-product-info">
+                                            <strong>
+                                                {{ $item->product->name }}
+                                            </strong>
+                                            <span>
+                                                Product #{{ $item->product->id }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="product-category">
+                                        {{ $item->product->category->name }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong>
+                                        {{ number_format($item->price, 2) }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    <strong>
+                                        {{ $item->quantity }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    <strong>
+                                        {{ number_format($item->price * $item->quantity, 2) }}
+                                    </strong>
+                                </td>
+                            </tr>
+
+                        @endforeach
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 

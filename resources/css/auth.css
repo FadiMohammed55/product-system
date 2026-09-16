@@ -1,0 +1,223 @@
+/* ========================================
+    01. Authentication - Global Variables 
+======================================== */
+:root {
+    --auth-bg: #080b12;
+    --auth-card: #10151f;
+    --auth-card-border: #1d2635;
+
+    --auth-text: #f5f7fa;
+    --auth-muted: #8b95a7;
+
+    --auth-input-bg: #0b1018;
+    --auth-input-border: #273244;
+
+    --auth-blue: #248cff;
+    --auth-blue-hover: #1479e8;
+
+    --auth-error-bg: rgba(239, 68, 68, 0.1);
+    --auth-error-border: rgba(239, 68, 68, 0.3);
+    --auth-error-text: #f87171;
+
+    --auth-radius: 12px;
+}
+
+/*==========================
+    02. Page 
+==========================*/
+.auth-page {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(36, 140, 255, 0.08),
+            transparent 35%
+        ),
+        var(--auth-bg);
+    color: var(--auth-text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+/*==========================
+    03. Container 
+==========================*/
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+}
+
+/*==========================
+    04. Login Card 
+==========================*/
+.auth-card {
+    width: 100%;
+    padding: 40px;
+    background: var(--auth-card);
+    border: 1px solid var(--auth-card-border);
+    border-radius: var(--auth-radius);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    box-sizing: border-box;
+}
+
+/*==========================
+    05. Brand 
+==========================*/
+.auth-brand {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.auth-logo {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: var(--auth-blue);
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+    box-shadow: 0 8px 28px rgba(36, 140, 255, 0.25);
+}
+
+.auth-brand h1 {
+    margin: 0;
+    color: var(--auth-text);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+}
+
+.auth-brand p {
+    margin: 8px 0 0;
+    color: var(--auth-muted);
+    font-size: 14px;
+}
+
+/*==========================
+    06. Error Message 
+==========================*/
+.auth-error {
+    margin-bottom: 20px;
+    padding: 12px 14px;
+    background: var(--auth-error-bg);
+    border: 1px solid var(--auth-error-border);
+    border-radius: 8px;
+    color: var(--auth-error-text);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/*==========================
+    07. Form 
+==========================*/
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: var(--auth-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/*==========================
+    08. Inputs 
+==========================*/
+.form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--auth-input-bg);
+    border: 1px solid var(--auth-input-border);
+    border-radius: 8px;
+    outline: none;
+    color: var(--auth-text);
+    font-size: 14px;
+    box-sizing: border-box;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: #5f6b7d;
+}
+
+.form-group input:focus {
+    border-color: var(--auth-blue);
+    background: #0d131d;
+    box-shadow: 0 0 0 3px rgba(36, 140, 255, 0.12);
+}
+
+/*==========================
+    09. Login Button 
+==========================*/
+.auth-button {
+    width: 100%;
+    margin-top: 4px;
+    padding: 13px 16px;
+    border: none;
+    border-radius: 8px;
+    background: var(--auth-blue);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.auth-button:hover {
+    background: var(--auth-blue-hover);
+    box-shadow: 0 8px 20px rgba(36, 140, 255, 0.2);
+}
+
+.auth-button:active {
+    transform: translateY(1px);
+}
+
+/*==========================
+    10. Footer 
+==========================*/
+.auth-footer {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--auth-card-border);
+    text-align: center;
+    color: var(--auth-muted);
+    font-size: 12px;
+}
+
+/*==========================
+    11. Responsive 
+==========================*/
+@media (max-width: 480px) {
+    .auth-page {
+        padding: 16px;
+    }
+    .auth-card {
+        padding: 28px 22px;
+    }
+    .auth-brand h1 {
+        font-size: 22px;
+    }
+}
