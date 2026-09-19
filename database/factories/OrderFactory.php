@@ -21,6 +21,7 @@ class OrderFactory extends Factory
         return [
             'user_id' => User::factory(),
             'total' => fake()->randomFloat(2, 10, 5000),
+            'currency' => 'USD',
             'status' => 'pending',
         ];
     }

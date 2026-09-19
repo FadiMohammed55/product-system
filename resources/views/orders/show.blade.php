@@ -41,6 +41,7 @@
 
             <strong>
                 {{ number_format($order->total, 2) }}
+                {{ $order->currency }}
             </strong>
 
         </div>
@@ -53,7 +54,7 @@
 
             <div>
                 <span>PURCHASE</span>
-                <H2>Order Items</H2>
+                <h2>Order Items</h2>
                 <p>Products included in this order</p>
             </div>
 
@@ -84,33 +85,61 @@
                             <tr>
                                 <td>
                                     <div class="cart-product">
-                                        @if ($item->product->image)
-                                            <img src="{{ asset($item->product->image) }}" alt="{{ $item->product->name }}"
-                                                class="cart-product-image">
+                                        @if ($item->product)
+                                            @if ($item->product->image)
+                                                <img src="{{ asset($item->product->image) }}" alt="{{ $item->product->name }}"
+                                                    class="cart-product-image">
+                                            @else
+                                                <div class="customer-empty-icon" aria-hidden="true">
+                                                    📦
+                                                </div>
+                                            @endif
+                                            <div class="cart-product-info">
+                                                <strong>
+                                                    {{ $item->product->name }}
+                                                </strong>
+                                                <span>
+                                                    Product #{{ $item->product->id }}
+                                                </span>
+                                            </div>
                                         @else
                                             <div class="customer-empty-icon" aria-hidden="true">
                                                 📦
                                             </div>
+                                            <div class="cart-product-info">
+                                                <strong>
+                                                    {{ $item->product_name }}
+                                                </strong>
+                                                <span>
+                                                    Product no longer available
+                                                </span>
+                                            </div>
                                         @endif
-                                        <div class="cart-product-info">
-                                            <strong>
-                                                {{ $item->product->name }}
-                                            </strong>
-                                            <span>
-                                                Product #{{ $item->product->id }}
-                                            </span>
-                                        </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="product-category">
-                                        {{ $item->product->category->name }}
-                                    </span>
+                                    @if ($item->product && $item->product->category)
+                                        <span class="product-category">
+                                            {{ $item->product->category->name }}
+                                        </span>
+                                    @else
+                                        <span class="product-category">
+                                            Not available
+                                        </span>
+                                    @endif
                                 </td>
                                 <td>
                                     <strong>
                                         {{ number_format($item->price, 2) }}
                                     </strong>
+                                    <span class="product-currency">
+                                        {{ $item->currency }}
+                                    </span>
+                                    <br>
+                                    <small>
+                                        ≈ {{ number_format($item->converted_price, 2) }}
+                                        {{ $order->currency }}
+                                    </small>
                                 </td>
                                 <td>
                                     <strong>
@@ -119,7 +148,8 @@
                                 </td>
                                 <td>
                                     <strong>
-                                        {{ number_format($item->price * $item->quantity, 2) }}
+                                        {{ number_format($item->converted_price * $item->quantity, 2) }}
+                                        {{ $order->currency }}
                                     </strong>
                                 </td>
                             </tr>

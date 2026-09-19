@@ -11,7 +11,7 @@
         <div>
             <span class="section-eyebrow">ORDER DETAILS</span>
             <h1>Order #{{ $order->id }}</h1>
-            <p>Place on {{ $order->created_at->format('Y-m-d H:i') }}</p>
+            <p>Placed on {{ $order->created_at->format('Y-m-d H:i') }}</p>
         </div>
 
         <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">
@@ -40,7 +40,10 @@
 
         <div>
             <span>Total</span>
-            <strong>{{ number_format($order->total, 2) }}</strong>
+            <strong>
+                {{ number_format($order->total, 2) }}
+                {{ $order->currency }}
+            </strong>
         </div>
 
         <div>
@@ -90,29 +93,57 @@
                             <tr>
                                 <td>
                                     <div class="product-cell">
-                                        @if ($item->product->image)
-                                            <img src="{{ asset($item->product->image) }}" alt="{{ $item->product->name }}"
-                                                class="product-image">
+                                        @if ($item->product)
+                                            @if ($item->product->image)
+                                                <img src="{{ asset($item->product->image) }}" alt="{{ $item->product->name }}"
+                                                    class="product-image">
+                                            @else
+                                                <div class="product-placeholder" aria-hidden="true">
+                                                    📦
+                                                </div>
+                                            @endif
+                                            <div class="product-info">
+                                                <strong>{{ $item->product->name }}</strong>
+                                                <span>Product #{{ $item->product->id }}</span>
+                                            </div>
                                         @else
                                             <div class="product-placeholder" aria-hidden="true">
                                                 📦
                                             </div>
+                                            <div class="product-info">
+                                                <strong>
+                                                    {{ $item->product_name }}
+                                                </strong>
+                                                <span>
+                                                    Product no longer available
+                                                </span>
+                                            </div>
                                         @endif
-                                        <div class="product-info">
-                                            <strong>{{ $item->product->name }}</strong>
-                                            <span>Product #{{ $item->product->id }}</span>
-                                        </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="category-badge">
-                                        {{ $item->product->category->name }}
-                                    </span>
+                                    @if ($item->product && $item->product->category)
+                                        <span class="category-badge">
+                                            {{ $item->product->category->name }}
+                                        </span>
+                                    @else
+                                        <span class="category-badge">
+                                            Not available
+                                        </span>
+                                    @endif
                                 </td>
                                 <td>
                                     <strong class="price">
                                         {{ number_format($item->price, 2) }}
                                     </strong>
+                                    <span>
+                                        {{ $item->currency }}
+                                    </span>
+                                    <br>
+                                    <small>
+                                        ≈ {{ number_format($item->converted_price, 2) }}
+                                        {{ $order->currency }}
+                                    </small>
                                 </td>
                                 <td>
                                     <span class="quantity-badge">
@@ -121,7 +152,8 @@
                                 </td>
                                 <td>
                                     <strong class="price">
-                                        {{ number_format($item->price * $item->quantity, 2) }}
+                                        {{ number_format($item->converted_price * $item->quantity, 2) }}
+                                        {{ $order->currency }}
                                     </strong>
                                 </td>
                             </tr>

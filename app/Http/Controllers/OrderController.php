@@ -10,6 +10,7 @@ class OrderController extends Controller
     {
         $orders = $request->user()
             ->orders()
+            ->with('user')
             ->latest()
             ->get();
 

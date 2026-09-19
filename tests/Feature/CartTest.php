@@ -145,4 +145,106 @@ class CartTest extends TestCase
 
         $response->assertRedirect('/login');
     }
+
+    public function test_cart_removes_products_that_no_longer_exist(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+        ]);
+
+        $product = Product::factory()->create([
+            'name' => 'Deleted Product',
+            'price' => 100,
+            'currency' => 'USD',
+        ]);
+
+        $productId = $product->id;
+
+        // Add the product to the cart.
+        $this->withSession([
+            'cart' => [
+                $productId => 2,
+            ],
+        ]);
+
+        // Delete the product after it was added to the cart.
+        $product->delete();
+
+        $response = $this->actingAs($customer)
+            ->get('/cart');
+
+        $response->assertOk();
+
+        $response->assertSessionHas(
+            'error',
+            'Some products in your cart are no longer available.'
+        );
+
+        // The deleted product should no longer exist in the cart.
+        $cart = session('cart', []);
+
+        $this->assertArrayNotHasKey($productId, $cart);
+    }
+
+    public function test_cart_handles_unsupported_product_currency(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+        ]);
+
+        $product = Product::factory()->create([
+            'name' => 'Unsupported Currency Product',
+            'price' => 100,
+            'currency' => 'GBP',
+        ]);
+
+        $response = $this->actingAs($customer)
+            ->withSession([
+                'cart' => [
+                    $product->id => 1,
+                ],
+            ])
+            ->get('/cart');
+
+        $response->assertRedirect('/cart');
+
+        $response->assertSessionHas(
+            'error',
+            'One or more products have an unsupported currency'
+        );
+    }
+
+    public function test_cart_calculates_total_for_mixed_currencies(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+        ]);
+
+        $usdProduct = Product::factory()->create([
+            'name' => 'USD Product',
+            'price' => 100,
+            'currency' => 'USD',
+        ]);
+
+        $eurProduct = Product::factory()->create([
+            'name' => 'EUR Product',
+            'price' => 100,
+            'currency' => 'EUR',
+        ]);
+
+        $response = $this->actingAs($customer)
+            ->withSession([
+                'cart' => [
+                    $usdProduct->id => 1,
+                    $eurProduct->id => 2,
+                ],
+            ])
+            ->get('/cart');
+
+        $response->assertOk();
+
+        // 100 USD + (100 EUR × 1.15 × 2) = 330 USD
+        $response->assertSee('330.00');
+        $response->assertSee('USD');
+    }
 }

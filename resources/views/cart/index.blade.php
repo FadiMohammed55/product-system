@@ -68,7 +68,8 @@
 
                             @php
                                 $quantity = $cart[$product->id];
-                                $subtotal = $product->price * $quantity;
+                                $convertedPrice = $convertedPrices[$product->id];
+                                $subtotal = $convertedPrice * $quantity;
                             @endphp
 
                             <tr>
@@ -78,7 +79,7 @@
                                             <img src="{{ asset($product->image) }}" alt="{{ $product->name }}"
                                                 class="cart-product-image">
                                         @else
-                                            <div class="customer-empty-icon">
+                                            <div class="customer-empty-icon" aria-hidden="true">
                                                 📦
                                             </div>
                                         @endif
@@ -100,6 +101,11 @@
                                     <span class="product-currency">
                                         {{ $product->currency }}
                                     </span>
+                                    <br>
+                                    <small>
+                                        ≈ {{ number_format($convertedPrice, 2) }}
+                                        {{ $baseCurrency }}
+                                    </small>
                                 </td>
                                 <td>
                                     <form action="{{ route('cart.update', ['product' => $product->id]) }}" method="post"
@@ -118,7 +124,7 @@
                                         {{ number_format($subtotal, 2) }}
                                     </strong>
                                     <span class="product-currency">
-                                        {{ $product->currency }}
+                                        {{ $baseCurrency }}
                                     </span>
                                 </td>
                                 <td>
@@ -145,8 +151,13 @@
         <div class="cart-summary">
 
             <div class="cart-total">
-                <span>Cart Total</span>
-                <strong>{{ number_format($total, 2) }}</strong>
+                <span>
+                    Cart Total
+                </span>
+                <strong>
+                    {{ number_format($total, 2) }}
+                    {{ $baseCurrency }}
+                </strong>
             </div>
 
             <form action="{{ route('checkout.store') }}" method="post">
@@ -154,9 +165,9 @@
                 @csrf
 
                 <button type="submit" class="store-btn store-btn-primary">
-                    Proceed to Checkout →
+                    Proceed to Checkout
                 </button>
-                
+
             </form>
 
         </div>

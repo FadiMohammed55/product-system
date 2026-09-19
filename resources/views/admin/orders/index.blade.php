@@ -101,7 +101,8 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.orders.show', ['order' => $order->id]) }}">
+                                    <a href="{{ route('admin.orders.show', ['order' => $order->id]) }}"
+                                    class="btn btn-secondary">
                                         View
                                     </a>
                                 </td>

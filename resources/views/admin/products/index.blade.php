@@ -70,12 +70,7 @@
                                             </div>
                                         @endif
                                         <div class="product-info">
-                                            <strong>
-                                                {{ $product->name }}
-                                            </strong>
-                                            <span>
-                                                Product #{{ $product->id }}
-                                            </span>
+                                            <strong>{{ $product->name }}</strong>
                                         </div>
                                     </div>
                                 </td>

@@ -66,7 +66,6 @@
 
                                         <div class="category-info">
                                             <strong>{{ $category->name }}</strong>
-                                            <span>Category #{{ $category->id }}</span>
                                         </div>
 
                                     </div>
