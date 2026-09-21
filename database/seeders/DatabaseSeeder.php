@@ -7,29 +7,36 @@ use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Testing\Fluent\Concerns\Has;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Seed the application's database.
+     */
     public function run(): void
     {
+        // ========================================
         // Users
+        // ========================================
+
         $admin = User::factory()->create([
             'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
+            'email' => 'admin@test.com',
+            'password' => 'password',
             'role' => 'admin',
         ]);
 
         $customer = User::factory()->create([
             'name' => 'Customer',
-            'email' => 'customer@example.com',
-            'password' => Hash::make('password'),
+            'email' => 'customer@test.com',
+            'password' => 'password',
             'role' => 'customer',
         ]);
 
+        // ========================================
         // Categories
+        // ========================================
+
         $electronics = Category::create([
             'name' => 'Electronics',
         ]);
@@ -46,7 +53,10 @@ class DatabaseSeeder extends Seeder
             'name' => 'Accessories',
         ]);
 
+        // ========================================
         // Products
+        // ========================================
+
         $iphone = Product::create([
             'category_id' => $phones->id,
             'name' => 'iPhone 15',
@@ -54,6 +64,7 @@ class DatabaseSeeder extends Seeder
             'currency' => 'USD',
             'rating' => 4.8,
             'image' => null,
+            'stock' => 10,
         ]);
 
         $samsung = Product::create([
@@ -63,6 +74,7 @@ class DatabaseSeeder extends Seeder
             'currency' => 'USD',
             'rating' => 4.7,
             'image' => null,
+            'stock' => 15,
         ]);
 
         $macbook = Product::create([
@@ -72,6 +84,7 @@ class DatabaseSeeder extends Seeder
             'currency' => 'USD',
             'rating' => 4.9,
             'image' => null,
+            'stock' => 5,
         ]);
 
         $dell = Product::create([
@@ -81,6 +94,7 @@ class DatabaseSeeder extends Seeder
             'currency' => 'USD',
             'rating' => 4.6,
             'image' => null,
+            'stock' => 8,
         ]);
 
         $airpods = Product::create([
@@ -90,29 +104,46 @@ class DatabaseSeeder extends Seeder
             'currency' => 'USD',
             'rating' => 4.7,
             'image' => null,
+            'stock' => 20,
         ]);
 
+        // ========================================
         // Order
+        // ========================================
+
         $order = Order::create([
             'user_id' => $customer->id,
             'total' => 0,
+            'currency' => 'USD',
             'status' => 'pending',
         ]);
 
+        // ========================================
         // Order Items
+        // ========================================
+
         $order->items()->create([
             'product_id' => $iphone->id,
+            'product_name' => $iphone->name,
             'quantity' => 1,
             'price' => $iphone->price,
+            'currency' => $iphone->currency,
+            'converted_price' => $iphone->price,
         ]);
 
         $order->items()->create([
             'product_id' => $airpods->id,
+            'product_name' => $airpods->name,
             'quantity' => 2,
             'price' => $airpods->price,
+            'currency' => $airpods->currency,
+            'converted_price' => $airpods->price,
         ]);
 
+        // ========================================
         // Calculate Order Total
+        // ========================================
+
         $total =
             ($iphone->price * 1) +
             ($airpods->price * 2);

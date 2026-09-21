@@ -512,4 +512,99 @@ class CheckoutTest extends TestCase
             session('cart')[$productId]
         );
     }
+
+    public function test_checkout_decreases_product_stock(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+        ]);
+
+        $product = Product::factory()->create([
+            'price' => 100,
+            'stock' => 10,
+        ]);
+
+        $response = $this->actingAs($customer)
+            ->withSession([
+                'cart' => [
+                    $product->id => 3,
+                ],
+            ])
+            ->post('/checkout');
+
+        $response->assertRedirect();
+
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'stock' => 7,
+        ]);
+    }
+
+    public function test_checkout_fails_when_cart_quantity_exceeds_stock(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+        ]);
+
+        $product = Product::factory()->create([
+            'price' => 100,
+            'stock' => 2,
+        ]);
+
+        $response = $this->actingAs($customer)
+            ->withSession([
+                'cart' => [
+                    $product->id => 5,
+                ],
+            ])
+            ->post('/checkout');
+
+        $response->assertRedirect('/cart');
+
+        $response->assertSessionHas(
+            'error',
+            "Insufficient stock for product: {$product->name}"
+        );
+
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'stock' => 2,
+        ]);
+
+        $this->assertSame(
+            5,
+            session('cart')[$product->id]
+        );
+    }
+
+    public function test_checkout_succeeds_when_cart_quantity_equals_stock(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+        ]);
+
+        $product = Product::factory()->create([
+            'price' => 100,
+            'stock' => 3,
+        ]);
+
+        $response = $this->actingAs($customer)
+            ->withSession([
+                'cart' => [
+                    $product->id => 3,
+                ],
+            ])
+            ->post('/checkout');
+
+        $response->assertRedirect();
+
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'stock' => 0,
+        ]);
+
+        $this->assertDatabaseCount('orders', 1);
+
+        $response->assertSessionMissing('cart');
+    }
 }

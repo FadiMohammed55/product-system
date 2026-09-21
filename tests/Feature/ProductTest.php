@@ -41,6 +41,7 @@ class ProductTest extends TestCase
                 'currency' => 'USD',
                 'rating' => 4.5,
                 'category_id' => $category->id,
+                'stock' => 10,
             ]);
 
         $respnose->assertRedirect('/admin/products');
@@ -51,6 +52,7 @@ class ProductTest extends TestCase
             'currency' => 'USD',
             'rating' => 4.5,
             'category_id' => $category->id,
+            'stock' => 10,
         ]);
     }
 
@@ -99,6 +101,7 @@ class ProductTest extends TestCase
                 'currency' => 'USD',
                 'rating' => 4.5,
                 'category_id' => $category->id,
+                'stock' => 20,
             ]);
 
         $response->assertRedirect('/admin/products');
@@ -110,6 +113,7 @@ class ProductTest extends TestCase
             'currency' => 'USD',
             'rating' => 4.5,
             'category_id' => $category->id,
+            'stock' => 20,
         ]);
     }
 

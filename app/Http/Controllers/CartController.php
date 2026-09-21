@@ -102,14 +102,23 @@ class CartController extends Controller
         $currencyService->rate($product->currency);
 
         /**
+         * Check Product Stock
+         */
+        $currentQuantity = $cart[$product->id] ?? 0;
+
+        if ($currentQuantity >= $product->stock) {
+            return redirect()
+                ->route('products.index')
+                ->with(
+                    'error',
+                    'This product is out of stock or the requested quantity is not available.'
+                );
+        }
+
+        /**
          * Add Product To Cart
          */
-
-        if (isset($cart[$product->id])) {
-            $cart[$product->id]++;
-        } else {
-            $cart[$product->id] = 1;
-        }
+        $cart[$product->id] = $currentQuantity + 1;
 
         $request->session()->put('cart', $cart);
 
@@ -124,6 +133,15 @@ class CartController extends Controller
             'quantity' => 'required|integer|min:1|max:99',
         ]);
 
+        if ($validated['quantity'] > $product->stock) {
+            return redirect()
+                ->route('cart.index')
+                ->with(
+                    'error',
+                    'Requested quantity is greater than available stock.'
+                );
+        }
+
         $cart = $request->session()->get('cart', []);
 
         if (isset($cart[$product->id])) {
@@ -132,7 +150,8 @@ class CartController extends Controller
 
         $request->session()->put('cart', $cart);
 
-        return redirect()->route('cart.index');
+        return redirect()
+            ->route('cart.index');
     }
 
     public function destroy(Request $request, Product $product)

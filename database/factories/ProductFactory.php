@@ -25,6 +25,7 @@ class ProductFactory extends Factory
             'currency' => 'USD',
             'rating' => fake()->randomFloat(1, 0, 5),
             'image' => null,
+            'stock' => fake()->numberBetween(1, 100)
         ];
     }
 }

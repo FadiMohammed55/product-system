@@ -77,15 +77,49 @@
                             </span>
                         </div>
 
-                        <form action="{{ route('cart.store', ['product' => $product->id]) }}" method="post">
+                        <div class="product-stock">
 
-                            @csrf
+                            @if ($product->stock === 0)
 
-                            <button type="submit" class="store-btn store-btn-primary store-btn-block">
-                                Add to Cart
+                                <span class="stock-out">
+                                    Out of Stock
+                                </span>
+
+                            @elseif ($product->stock <= 5)
+
+                                <span class="stock-low">
+                                    Only {{ $product->stock }} left
+                                </span>
+
+                            @else
+
+                                <span class="stock-available">
+                                    {{ $product->stock }} available
+                                </span>
+
+                            @endif
+
+                        </div>
+
+                        @if ($product->stock > 0)
+
+                            <form action="{{ route('cart.store', ['product' => $product->id]) }}" method="post">
+
+                                @csrf
+
+                                <button type="submit" class="store-btn store-btn-primary store-btn-block">
+                                    Add to Cart
+                                </button>
+
+                            </form>
+
+                        @else
+
+                            <button type="button" class="store-btn store-btn-secondary store-btn-block" disabled>
+                                Out of Stock
                             </button>
 
-                        </form>
+                        @endif
 
                     </div>
 

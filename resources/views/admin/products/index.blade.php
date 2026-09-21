@@ -44,6 +44,7 @@
                             <th>Product</th>
                             <th>Category</th>
                             <th>Price</th>
+                            <th>Stock</th>
                             <th>Rating</th>
                             <th>Actions</th>
                         </tr>
@@ -86,6 +87,21 @@
                                     <span class="currency">
                                         {{ $product->currency }}
                                     </span>
+                                </td>
+                                <td>
+                                    @if ($product->stock === 0)
+                                        <span class="status-badge status-danger">
+                                            Out of Stock
+                                        </span>
+                                    @elseif ($product->stock <= 5)
+                                        <span class="status-badge status-warning">
+                                            {{ $product->stock }} left
+                                        </span>
+                                    @else
+                                        <span class="status-badge status-success">
+                                            {{ $product->stock }}
+                                        </span>
+                                    @endif
                                 </td>
                                 <td>
                                     <span class="rating">

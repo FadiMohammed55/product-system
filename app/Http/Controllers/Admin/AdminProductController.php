@@ -31,6 +31,7 @@ class AdminProductController extends Controller
             'rating' => 'required|numeric|min:0|max:5',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|max:2048',
+            'stock' => 'required|integer|min:0',
         ]);
 
         if ($request->hasFile('image')) {
@@ -64,6 +65,7 @@ class AdminProductController extends Controller
             'rating' => 'required|numeric|min:0|max:5',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|max:2048',
+            'stock' => 'required|integer|min:0',
         ]);
 
         if ($request->hasFile('image')) {

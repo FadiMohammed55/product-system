@@ -126,6 +126,23 @@
 
                     </div>
 
+                    <div class="form-group">
+
+                        <label for="stock">Stock</label>
+
+                        <input type="number" name="stock" id="stock" min="0" value="{{ old('stock', $product->stock) }}"
+                            placeholder="0" required class="@error('stock') input-error @enderror">
+
+                        <small class="field-help">
+                            Available quantity in stock
+                        </small>
+
+                        @error('stock')
+                            <p class="field-error">{{ $message }}</p>
+                        @enderror
+
+                    </div>
+
                 </div>
 
                 <div class="form-group">

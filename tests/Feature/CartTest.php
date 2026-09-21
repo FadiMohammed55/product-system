@@ -29,7 +29,9 @@ class CartTest extends TestCase
             'role' => 'customer',
         ]);
 
-        $product = Product::factory()->create();
+        $product = Product::factory()->create([
+            'stock' => 5,
+        ]);
 
         $response = $this->actingAs($customer)
             ->post("/cart/{$product->id}");
@@ -47,7 +49,9 @@ class CartTest extends TestCase
             'role' => 'customer',
         ]);
 
-        $product = Product::factory()->create();
+        $product = Product::factory()->create([
+            'stock' => 5,
+        ]);
 
         $this->actingAs($customer)
             ->post("/cart/{$product->id}");
@@ -67,7 +71,9 @@ class CartTest extends TestCase
             'role' => 'customer',
         ]);
 
-        $product = Product::factory()->create();
+        $product = Product::factory()->create([
+            'stock' => 5,
+        ]);
 
         $response = $this->actingAs($customer)
             ->withSession([
@@ -224,12 +230,14 @@ class CartTest extends TestCase
             'name' => 'USD Product',
             'price' => 100,
             'currency' => 'USD',
+            'stock' => 5,
         ]);
 
         $eurProduct = Product::factory()->create([
             'name' => 'EUR Product',
             'price' => 100,
             'currency' => 'EUR',
+            'stock' => 5,
         ]);
 
         $response = $this->actingAs($customer)

@@ -9,15 +9,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Product extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'category_id',
         'name',
         'price',
         'currency',
         'rating',
-        'image'
+        'image',
+        'stock'
     ];
+
+    public function casts(): array
+    {
+        return [
+            'price' => 'decimal:2',
+            'rating' => 'decimal:1',
+            'stock' => 'integer'
+        ];
+    }
 
     public function category()
     {
