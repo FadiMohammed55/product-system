@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\User;
+use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -112,6 +113,33 @@ class CategoryTest extends TestCase
 
         $this->assertDatabaseMissing('categories', [
             'id' => $category->id,
+        ]);
+    }
+
+    public function test_admin_cannot_delete_category_with_products(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin'
+        ]);
+
+        $category = Category::factory()->create([
+            'name' => 'Electronics'
+        ]);
+
+        Product::factory()->create([
+            'category_id' => $category->id
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->delete("/admin/categories/{$category->id}");
+
+        $response->assertRedirect('/admin/categories');
+
+        $response->assertSessionHas('error');
+
+        $this->assertDatabaseHas('categories', [
+            'id' => $category->id,
+            'name' => 'Electronics',
         ]);
     }
 

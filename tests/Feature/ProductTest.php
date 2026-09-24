@@ -34,7 +34,7 @@ class ProductTest extends TestCase
 
         $category = Category::factory()->create();
 
-        $respnose = $this->actingAs($admin)
+        $response = $this->actingAs($admin)
             ->post('/admin/products', [
                 'name' => 'iPhone 15',
                 'price' => 999.99,
@@ -44,7 +44,7 @@ class ProductTest extends TestCase
                 'stock' => 10,
             ]);
 
-        $respnose->assertRedirect('/admin/products');
+        $response->assertRedirect('/admin/products');
 
         $this->assertDatabaseHas('products', [
             'name' => 'iPhone 15',
@@ -66,7 +66,7 @@ class ProductTest extends TestCase
             ->post('/admin/products', [
                 'name' => '',
                 'price' => -100,
-                'currency' => 'X',
+                'currency' => 'GBP',
                 'rating' => 10,
                 'category_id' => 99999,
             ]);

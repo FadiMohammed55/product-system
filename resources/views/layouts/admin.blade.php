@@ -38,25 +38,25 @@
 
                 <a href="{{ route('admin.dashboard') }}"
                     class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                    <span class="nav-icon">⌂</span>
+                    <span class="nav-icon" aria-hidden="true">⌂</span>
                     <span>Dashboard</span>
                 </a>
 
                 <a href="{{ route('admin.products.index') }}"
                     class="{{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
-                    <span class="nav-icon">▣</span>
+                    <span class="nav-icon" aria-hidden="true">▣</span>
                     <span>Products</span>
                 </a>
 
                 <a href="{{ route('admin.categories.index') }}"
                     class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                    <span class="nav-icon">▤</span>
+                    <span class="nav-icon" aria-hidden="true">▤</span>
                     <span>Categories</span>
                 </a>
 
                 <a href="{{ route('admin.orders.index') }}"
                     class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
-                    <span class="nav-icon">◫</span>
+                    <span class="nav-icon" aria-hidden="true">◫</span>
                     <span>Orders</span>
                 </a>
 

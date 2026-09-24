@@ -43,6 +43,42 @@ class CartTest extends TestCase
         ]);
     }
 
+    public function test_customer_cannot_add_more_than_available_stock(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+        ]);
+
+        $product = Product::factory()->create([
+            'stock' => 2,
+        ]);
+
+        $response = $this->actingAs($customer)
+            ->post("/cart/{$product->id}");
+
+        $response->assertRedirect('/products');
+
+        $response = $this->actingAs($customer)
+            ->post("/cart/{$product->id}");
+
+        $response->assertRedirect('/products');
+
+        $response = $this->actingAs($customer)
+            ->post("/cart/{$product->id}");
+
+        $response->assertRedirect('/products');
+
+        $response->assertSessionHas(
+            'error',
+            'This product is out of stock or the requested quantity is not available.'
+        );
+
+        $this->assertSame(
+            2,
+            session('cart')[$product->id]
+        );
+    }
+
     public function test_adding_same_product_increases_quantity(): void
     {
         $customer = User::factory()->create([

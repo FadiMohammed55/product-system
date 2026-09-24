@@ -8,7 +8,10 @@
 
         <div>
             <h1>Order #{{ $order->id }}</h1>
-            <p>Placed on {{ $order->created_at->format('Y-m-d H:i') }}</p>
+            <p>
+                Placed on {{ $order->created_at->format('Y-m-d') }}
+                at {{ $order->created_at->format('H:i') }}
+            </p>
         </div>
 
         <a href="{{ route('orders.index') }}" class="store-btn store-btn-secondary">
@@ -20,30 +23,22 @@
     <div class="customer-order-info">
 
         <div class="customer-order-stat">
-
-            <span>
-                Order Status
-            </span>
+            <span>Order Status</span>
 
             <strong>
                 <span class="customer-status customer-status-{{ $order->status }}">
                     {{ ucfirst($order->status) }}
                 </span>
             </strong>
-
         </div>
 
         <div class="customer-order-stat">
+            <span>Order Total</span>
 
-            <span>
-                Order Total
-            </span>
-
-            <strong>
+            <strong class="order-detail-total">
                 {{ number_format($order->total, 2) }}
-                {{ $order->currency }}
+                <span>{{ $order->currency }}</span>
             </strong>
-
         </div>
 
     </div>
@@ -90,12 +85,12 @@
                                                 <img src="{{ asset($item->product->image) }}" alt="{{ $item->product->name }}"
                                                     class="cart-product-image">
                                             @else
-                                                <div class="customer-empty-icon" aria-hidden="true">
+                                                <div class="cart-product-placeholder" aria-hidden="true">
                                                     📦
                                                 </div>
                                             @endif
                                             <div class="cart-product-info">
-                                                <strong>
+                                                <strong class="order-item-name">
                                                     {{ $item->product->name }}
                                                 </strong>
                                                 <span>
@@ -103,11 +98,11 @@
                                                 </span>
                                             </div>
                                         @else
-                                            <div class="customer-empty-icon" aria-hidden="true">
+                                            <div class="cart-product-placeholder" aria-hidden="true">
                                                 📦
                                             </div>
                                             <div class="cart-product-info">
-                                                <strong>
+                                                <strong class="order-item-name">
                                                     {{ $item->product_name }}
                                                 </strong>
                                                 <span>
@@ -142,14 +137,14 @@
                                     </small>
                                 </td>
                                 <td>
-                                    <strong>
-                                        {{ $item->quantity }}
-                                    </strong>
+                                    <span class="order-item-quantity">
+                                        ×{{ $item->quantity }}
+                                    </span>
                                 </td>
                                 <td>
-                                    <strong>
+                                    <strong class="order-item-subtotal">
                                         {{ number_format($item->converted_price * $item->quantity, 2) }}
-                                        {{ $order->currency }}
+                                        <span>{{ $order->currency }}</span>
                                     </strong>
                                 </td>
                             </tr>

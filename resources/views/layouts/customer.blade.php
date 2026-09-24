@@ -14,7 +14,7 @@
 
         <div class="customer-sidebar-overlay"></div>
 
-        <aside class="sidebar">
+        <aside id="customer-sidebar" class="sidebar">
 
             <a href="{{ route('products.index') }}" class="customer-brand">
 
@@ -33,17 +33,17 @@
 
                 <a href="{{ route('products.index') }}"
                     class="{{ request()->routeIs('products.index') ? 'active' : '' }}">
-                    <span class="customer-nav-icon">◈</span>
+                    <span class="customer-nav-icon" aria-hidden="true">◈</span>
                     <span>Products</span>
                 </a>
 
                 <a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'active' : '' }}">
-                    <span class="customer-nav-icon">🛒</span>
+                    <span class="customer-nav-icon" aria-hidden="true">🛒</span>
                     <span>Cart</span>
                 </a>
 
                 <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') ? 'active' : '' }}">
-                    <span class="customer-nav-icon">📦</span>
+                    <span class="customer-nav-icon" aria-hidden="true">📦</span>
                     <span>My Orders</span>
                 </a>
 
@@ -86,7 +86,7 @@
                 <div class="customer-topbar-left">
 
                     <button type="button" class="customer-sidebar-toggle" aria-label="Toggle navigation"
-                        aria-expanded="false">
+                        aria-expanded="false" aria-controls="customer-sidebar">
                         ☰
                     </button>
 
@@ -121,11 +121,14 @@
             const closeSidebar = () => {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('show');
+                toggleButton.setAttribute('aria-expanded', 'false')
             };
 
             toggleButton.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('show', sidebar.classList.contains('open'));
+                const isOpen = sidebar.classList.toggle('open');
+
+                overlay.classList.toggle('show', isOpen);
+                toggleButton.setAttribute('aria-expanded', String(isOpen));
             });
 
             overlay.addEventListener('click', closeSidebar);

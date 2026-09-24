@@ -23,6 +23,12 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="store-alert store-alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
     @if ($products->isEmpty())
 
         <div class="customer-empty-state">
@@ -79,7 +85,7 @@
                                             <img src="{{ asset($product->image) }}" alt="{{ $product->name }}"
                                                 class="cart-product-image">
                                         @else
-                                            <div class="customer-empty-icon" aria-hidden="true">
+                                            <div class="cart-product-placeholder" aria-hidden="true">
                                                 📦
                                             </div>
                                         @endif

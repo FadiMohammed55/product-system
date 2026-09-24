@@ -688,11 +688,11 @@ button {
     font-size: 19px;
 }
 
-.stat-trend {
+.stat-meta {
     padding: 4px 8px;
     border-radius: 20px;
     background: var(--success-soft);
-    color: #86efac;
+    color: #60a5fa;
     font-size: 10px;
     font-weight: 700;
 }
@@ -1174,6 +1174,21 @@ tbody tr:last-child td {
 .status-cancelled {
     background: var(--danger-soft);
     color: #fca5a5;
+}
+
+.status-stock-out {
+    background: var(--danger-soft);
+    color: #fca5a5;
+}
+
+.status-stock-low {
+    background: var(--warning-soft);
+    color: #fcd34d;
+}
+
+.status-stock-available {
+    background: var(--success-soft);
+    color: #86efac;
 }
 
 /*==============================

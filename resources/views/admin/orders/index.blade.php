@@ -87,6 +87,7 @@
                                 <td>
                                     <strong class="price">
                                         {{ number_format($order->total, 2) }}
+                                        {{ $order->currency }}
                                     </strong>
                                 </td>
                                 <td>
@@ -101,8 +102,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.orders.show', ['order' => $order->id]) }}"
-                                    class="btn btn-secondary">
+                                    <a href="{{ route('admin.orders.show', ['order' => $order->id]) }}" class="btn btn-secondary">
                                         View
                                     </a>
                                 </td>

@@ -27,7 +27,7 @@
 
         <div class="customer-empty-state">
 
-            <div class="customer-empty-icon">
+            <div class="customer-empty-icon" aria-hidden="true">
                 📦
             </div>
 
@@ -67,18 +67,22 @@
 
                             <tr>
                                 <td>
-                                    <strong>
+                                    <strong class="order-number">
                                         #{{ $order->id }}
                                     </strong>
                                 </td>
                                 <td>
-                                    <span>
-                                        {{ $order->created_at->format('Y-m-d H:i') }}
+                                    <span class="order-date">
+                                        {{ $order->created_at->format('Y-m-d') }}
+                                        <small>
+                                            {{ $order->created_at->format('H:i') }}
+                                        </small>
                                     </span>
                                 </td>
                                 <td>
-                                    <strong>
+                                    <strong class="order-total">
                                         {{ number_format($order->total, 2) }}
+                                        <small>{{ $order->currency }}</small>
                                     </strong>
                                 </td>
                                 <td>
@@ -88,7 +92,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('orders.show', ['order' => $order->id]) }}"
-                                        class="store-btn store-btn-secondary">
+                                        class="store-btn store-btn-secondary order-view-button">
                                         View Order
                                     </a>
                                 </td>

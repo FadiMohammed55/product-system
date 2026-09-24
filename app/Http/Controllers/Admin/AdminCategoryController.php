@@ -49,8 +49,19 @@ class AdminCategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        if ($category->products()->exists()) {
+            return redirect()
+                ->route('admin.categories.index')
+                ->with(
+                    'error',
+                    'This category cannot be deleted because it contains products.'
+                );
+        }
+
         $category->delete();
 
-        return redirect('/admin/categories');
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Category deleted successfully');
     }
 }

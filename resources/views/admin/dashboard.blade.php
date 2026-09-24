@@ -40,7 +40,7 @@
                 <div class="stat-icon" aria-hidden="true">
                     📦
                 </div>
-                <span class="stat-trend">
+                <span class="stat-meta">
                     Store
                 </span>
             </div>
@@ -65,7 +65,7 @@
                 <div class="stat-icon" aria-hidden="true">
                     🗂️
                 </div>
-                <span class="stat-trend">
+                <span class="stat-meta">
                     Store
                 </span>
             </div>
@@ -90,7 +90,7 @@
                 <div class="stat-icon" aria-hidden="true">
                     👤
                 </div>
-                <span class="stat-trend">
+                <span class="stat-meta">
                     Users
                 </span>
             </div>
@@ -113,7 +113,7 @@
                 <div class="stat-icon" aria-hidden="true">
                     🛒
                 </div>
-                <span class="stat-trend">
+                <span class="stat-meta">
                     Sales
                 </span>
             </div>
@@ -183,6 +183,7 @@
                                 <th>Category</th>
                                 <th>Price</th>
                                 <th>Rating</th>
+                                <th>Stock</th>
                             </tr>
 
                         </thead>
@@ -225,6 +226,24 @@
                                         <span class="rating">★
                                             {{ number_format($product->rating, 1) }}
                                         </span>
+                                    </td>
+                                    <td>
+                                        @if ($product->stock === 0)
+                                            <span class="status-badge status-stock-out">
+                                                <span class="status-dot" aria-hidden="true"></span>
+                                                Out of Stock
+                                            </span>
+                                        @elseif ($product->stock <= 5)
+                                            <span class="status-badge status-stock-low">
+                                                <span class="status-dot" aria-hidden="true"></span>
+                                                {{ $product->stock }} left
+                                            </span>
+                                        @else
+                                            <span class="status-badge status-stock-available">
+                                                <span class="status-dot" aria-hidden="true"></span>
+                                                {{ $product->stock }} available
+                                            </span>
+                                        @endif
                                     </td>
                                 </tr>
 
@@ -296,39 +315,40 @@
 
                             @foreach ($latestOrders as $order)
 
-                            <tr>
-                                <td>
-                                    <a href="{{ route('admin.orders.show', $order) }}" class="order-id">
-                                        #{{ $order->id }}
-                                    </a>
-                                </td>
-                                <td>
-                                    <div class="customer-cell">
-                                        <div class="customer-avatar">
-                                            {{ strtoupper(substr($order->user->name, 0, 1)) }}
+                                <tr>
+                                    <td>
+                                        <a href="{{ route('admin.orders.show', $order) }}" class="order-id">
+                                            #{{ $order->id }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <div class="customer-cell">
+                                            <div class="customer-avatar">
+                                                {{ strtoupper(substr($order->user->name, 0, 1)) }}
+                                            </div>
+                                            <span class="customer-name">
+                                                {{ $order->user->name }}
+                                            </span>
                                         </div>
-                                        <span class="customer-name">
-                                            {{ $order->user->name }}
+                                    </td>
+                                    <td>
+                                        <strong class="price">
+                                            {{ number_format($order->total, 2) }}
+                                            {{ $order->currency }}
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-{{ $order->status }}">
+                                            <span class="status-dot" aria-hidden="true"></span>
+                                            {{ ucfirst($order->status) }}
                                         </span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <strong class="price">
-                                        {{ number_format($order->total, 2) }}
-                                    </strong>
-                                </td>
-                                <td>
-                                    <span class="status-badge status-{{ $order->status }}">
-                                        <span class="status-dot" aria-hidden="true"></span>
-                                        {{ ucfirst($order->status) }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="date">
-                                        {{ $order->created_at->format('Y-m-d H:i') }}
-                                    </span>
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td>
+                                        <span class="date">
+                                            {{ $order->created_at->format('Y-m-d H:i') }}
+                                        </span>
+                                    </td>
+                                </tr>
 
                             @endforeach
 

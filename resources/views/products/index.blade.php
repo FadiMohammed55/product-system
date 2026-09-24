@@ -24,6 +24,12 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="store-alert store-alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
     @if ($products->isEmpty())
 
         <div class="customer-empty-state">
@@ -81,19 +87,19 @@
 
                             @if ($product->stock === 0)
 
-                                <span class="stock-out">
+                                <span class="customer-stock customer-stock-out">
                                     Out of Stock
                                 </span>
 
                             @elseif ($product->stock <= 5)
 
-                                <span class="stock-low">
+                                <span class="customer-stock customer-stock-low">
                                     Only {{ $product->stock }} left
                                 </span>
 
                             @else
 
-                                <span class="stock-available">
+                                <span class="customer-stock customer-stock-available">
                                     {{ $product->stock }} available
                                 </span>
 

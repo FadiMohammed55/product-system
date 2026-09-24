@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AdminProductController extends Controller
 {
@@ -27,7 +28,12 @@ class AdminProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'currency' => 'required|string|size:3',
+            'currency' => [
+                'required',
+                'string',
+                'size:3',
+                Rule::in(array_keys(config('currency.rates'))),
+            ],
             'rating' => 'required|numeric|min:0|max:5',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|max:2048',
@@ -61,7 +67,12 @@ class AdminProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'currency' => 'required|string|size:3',
+            'currency' => [
+                'required',
+                'string',
+                'size:3',
+                Rule::in(array_keys(config('currency.rates'))),
+            ],
             'rating' => 'required|numeric|min:0|max:5',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|max:2048',

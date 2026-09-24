@@ -199,19 +199,22 @@ class CheckoutTest extends TestCase
         $usdProduct = Product::factory()->create([
             'name' => 'USD Product',
             'price' => 100,
-            'currency' => 'USD'
+            'currency' => 'USD',
+            'stock' => 2,
         ]);
 
         $eurProduct = Product::factory()->create([
             'name' => 'EUR Product',
             'price' => 100,
-            'currency' => 'EUR'
+            'currency' => 'EUR',
+            'stock' => 1,
         ]);
 
         $ilsProduct = Product::factory()->create([
             'name' => 'ILS Product',
             'price' => 100,
-            'currency' => 'ILS'
+            'currency' => 'ILS',
+            'stock' => 3,
         ]);
 
         $response = $this->actingAs($customer)
@@ -426,6 +429,7 @@ class CheckoutTest extends TestCase
             'name' => 'Deleted Product',
             'price' => 100,
             'currency' => 'EUR',
+            'stock' => 2,
         ]);
 
         $response = $this->actingAs($customer)

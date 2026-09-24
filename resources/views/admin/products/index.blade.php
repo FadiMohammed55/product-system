@@ -90,16 +90,16 @@
                                 </td>
                                 <td>
                                     @if ($product->stock === 0)
-                                        <span class="status-badge status-danger">
+                                        <span class="status-badge status-stock-out">
                                             Out of Stock
                                         </span>
                                     @elseif ($product->stock <= 5)
-                                        <span class="status-badge status-warning">
+                                        <span class="status-badge status-stock-low">
                                             {{ $product->stock }} left
                                         </span>
                                     @else
-                                        <span class="status-badge status-success">
-                                            {{ $product->stock }}
+                                        <span class="status-badge status-stock-available">
+                                            {{ $product->stock }} available
                                         </span>
                                     @endif
                                 </td>

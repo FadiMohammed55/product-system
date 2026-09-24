@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Product System</title>
+    <title>Create Account | Product System</title>
     @vite(['resources/css/auth.css'])
 </head>
 
@@ -22,15 +22,9 @@
 
                 <h1>Product System</h1>
 
-                <p>Sign in to your account</p>
+                <p>Create your customer account</p>
 
             </div>
-
-            @if (session('success'))
-                <div class="auth-success">
-                    {{ session('success') }}
-                </div>
-            @endif
 
             @if ($errors->any())
                 <div class="auth-error">
@@ -38,9 +32,18 @@
                 </div>
             @endif
 
-            <form action="{{ route('login.store') }}" method="post" class="auth-form">
+            <form action="{{ route('register.store') }}" method="post" class="auth-form">
 
                 @csrf
+
+                <div class="form-group">
+
+                    <label for="name">Name</label>
+
+                    <input type="text" name="name" id="name" value="{{ old('name') }}" placeholder="Enter your name"
+                        autocomplete="name" required>
+
+                </div>
 
                 <div class="form-group">
 
@@ -55,20 +58,29 @@
 
                     <label for="password">Password</label>
 
-                    <input type="password" name="password" id="password" placeholder="Enter your password"
-                        autocomplete="current-password" required>
+                    <input type="password" name="password" id="password" placeholder="Create a password"
+                        autocomplete="new-password" required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="password_confirmation">Confirm Password</label>
+
+                    <input type="password" name="password_confirmation" id="password_confirmation"
+                        placeholder="Confirm your password" autocomplete="new-password" required>
 
                 </div>
 
                 <button type="submit" class="auth-button">
-                    Login
+                    Create Account
                 </button>
 
             </form>
 
             <div class="auth-register">
-                <span>Don't have an account</span>
-                <a href="{{ route('register') }}">Create an account</a>
+                <span>Already have an account?</span>
+                <a href="{{ route('login') }}">Login</a>
             </div>
 
             <div class="auth-footer">

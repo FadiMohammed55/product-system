@@ -111,10 +111,11 @@
                         <label for="currency">Currency</label>
 
                         <select name="currency" id="currency" required class="@error('currency') input-error @enderror">
-                            <option value="">Select Currency</option>
-                            <option value="USD" @selected(old('currency') === 'USD')>USD</option>
-                            <option value="EUR" @selected(old('currency') === 'EUR')>EUR</option>
-                            <option value="ILS" @selected(old('currency') === 'ILS')>ILS</option>
+                            @foreach (config('currency.rates') as $currency => $rate)
+                                <option value="{{ $currency }}" @selected(old('currency') === $currency)>
+                                    {{ $currency }}
+                                </option>
+                            @endforeach
                         </select>
 
                         @error('currency')
