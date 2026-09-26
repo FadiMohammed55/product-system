@@ -98,6 +98,12 @@ class AdminUserController extends Controller
                 ->with('error', 'The last administrator cannot be deleted.');
         }
 
+        if ($user->orders()->exists()) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with('error', 'This user cannot be deleted because they have existing orders.');
+        }
+
         $user->delete();
 
         return redirect()
