@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
@@ -54,6 +55,9 @@ Route::middleware('customer')->group(function () {
         ->name('cart.update');
     Route::delete('/cart/{product}', [CartController::class, 'destroy'])
         ->name('cart.destroy');
+
+    // Users
+    Route::resource('users', AdminUserController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
 
     // Orders
     Route::get('/orders', [OrderController::class, 'index'])
