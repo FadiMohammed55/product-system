@@ -138,7 +138,7 @@ class AdminUserTest extends TestCase
         ]);
     }
 
-    public function test_admin_cannot_delete_last_administrator(): void
+    public function test_admin_can_delete_another_administrator_when_two_exist(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $secondAdmin = User::factory()->create(['role' => 'admin']);
@@ -148,9 +148,32 @@ class AdminUserTest extends TestCase
 
         $response->assertRedirect('/admin/users');
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseMissing('users', [
             'id' => $secondAdmin->id,
         ]);
+    }
+
+    public function test_admin_cannot_delete_user_with_orders(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $customer = User::factory()->create(['role' => 'customer']);
+
+        $customer->orders()->create([
+            'total' => 100,
+            'status' => 'pending',
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->delete("/admin/users/{$customer->id}");
+
+        $response->assertRedirect('/admin/users');
+        $response->assertSessionHas('error', 'This user cannot be deleted because they have existing orders.');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $customer->id,
+        ]);
+
+        $this->assertDatabaseCount('orders', 1);
     }
 
     public function test_admin_can_delete_customer(): void
