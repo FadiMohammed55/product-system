@@ -10,12 +10,55 @@ use Illuminate\Validation\Rule;
 
 class AdminProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')->get();
+        $categories = Category::orderBy('name')->get();
 
-        return view('admin.products.index', compact('products'));
+        $currencies = array_keys(config('currency.rates'));
+
+        $products = Product::with('category')
+            // Search by product name
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = trim($request->input('search'));
+                $query->where('name', 'like', "%{$search}%");
+            })
+            // Filter by category
+            ->when(
+                $request->filled('category_id') &&
+                Category::whereKey($request->input('category_id'))->exists(),
+                function ($query) use ($request) {
+                    $query->where('category_id', $request->input('category_id'));
+                }
+            )
+            // Filter by currency
+            ->when(
+                in_array($request->input('currency'), $currencies, true),
+                function ($query) use ($request) {
+                    $query->where('currency', $request->input('currency'));
+                }
+            )
+            // Filter by stock status
+            ->when(
+                in_array($request->input('stock'), ['out', 'low', 'in'], true),
+                function ($query) use ($request) {
+                    if ($request->input('stock') === 'out') {
+                        $query->where('stock', 0);
+                    }
+                    if ($request->input('stock') === 'low') {
+                        $query->whereBetween('stock', [1, 5]);
+                    }
+                    if ($request->input('stock') === 'in') {
+                        $query->where('stock', '>', 5);
+                    }
+                }
+            )
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('admin.products.index', compact('products', 'categories', 'currencies'));
     }
+
     public function create()
     {
         $categories = Category::all();

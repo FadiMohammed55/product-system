@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
@@ -83,6 +84,10 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     // Categories
     Route::resource('categories', AdminCategoryController::class)
         ->except(['show']);
+
+    // Users
+    Route::resource('users', AdminUserController::class)
+        ->only(['index', 'show', 'edit', 'update', 'destroy']);
 
     // Orders
     Route::get('/orders', [AdminOrderController::class, 'index'])

@@ -29,9 +29,101 @@
 
     @endif
 
-    @if ($products->count())
+    @if (session('error'))
 
-        <div class="table-card">
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+
+    @endif
+
+    <div class="table-card product-filters-card">
+
+        <form action="{{ route('admin.products.index') }}" method="get" class="product-filters-form">
+
+            <div class="filter-field">
+
+                <label for="search">Search product</label>
+                <input type="search" name="search" id="search" value="{{ request('search') }}"
+                    placeholder="Enter product name...">
+
+            </div>
+
+            <div class="filter-field">
+
+                <label for="category_id">Category</label>
+                <select name="category_id" id="category_id">
+                    <option value="">All categories</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}" @selected((string) request('category_id') === (string) $category->id)>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+            </div>
+
+            <div class="filter-field">
+
+                <label for="currency">Currency</label>
+                <select name="currency" id="currency">
+                    <option value="">All currencies</option>
+                    @foreach ($currencies as $currency)
+                        <option value="{{ $currency }}" @selected(request('currency') === $currency)>
+                            {{ $currency }}
+                        </option>
+                    @endforeach
+                </select>
+
+            </div>
+
+            <div class="filter-field">
+
+                <label for="stock">Stock</label>
+                <select name="stock" id="stock">
+                    <option value="">All stock levels</option>
+                    <option value="out" @selected(request('stock') === 'out')>
+                        Out of Stock
+                    </option>
+                    <option value="low" @selected(request('stock') === 'low')>
+                        Low Stock
+                    </option>
+                    <option value="in" @selected(request('stock') === 'in')>
+                        In Stock
+                    </option>
+                </select>
+
+            </div>
+
+            <div class="product-filter-actions">
+
+                <button type="submit" class="btn btn-primary">
+                    Apply Filters
+                </button>
+
+                <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
+                    Reset
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="table-card">
+
+        <div class="product-results-header">
+
+            <span>
+                Showing {{ $products->firstItem() ?? 0 }}
+                - {{ $products->lastItem() ?? 0 }}
+                of {{ $products->total() }} products
+            </span>
+
+        </div>
+
+        @if ($products->count())
 
             <div class="table-wrapper">
 
@@ -77,7 +169,7 @@
                                 </td>
                                 <td>
                                     <span class="category-badge">
-                                        {{ $product->category->name }}
+                                        {{ $product->category?->name ?? 'Uncategorized' }}
                                     </span>
                                 </td>
                                 <td>
@@ -115,7 +207,8 @@
                                             Edit
                                         </a>
                                         <form action="{{ route('admin.products.destroy', ['product' => $product->id]) }}"
-                                            method="post">
+                                            method="post"
+                                            onsubmit="return confirm('Are you sure you want to delete this product?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger">
@@ -134,11 +227,13 @@
 
             </div>
 
-        </div>
+            @if ($products->hasPages())
+                <div class="pagination-wrapper">
+                    {{ $products->links() }}
+                </div>
+            @endif
 
-    @else
-
-        <div class="table-card">
+        @else
 
             <div class="empty-state">
 
@@ -148,16 +243,19 @@
 
                 <h2>No Products Found</h2>
 
-                <p>You haven't added any products yet</p>
+                <p>
+                    No products match your search or selected filters.
+                    Try changing your filters or resetting them.
+                </p>
 
-                <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
-                    Add Your First Product
+                <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
+                    Clear Filters
                 </a>
 
             </div>
 
-        </div>
+        @endif
 
-    @endif
+    </div>
 
 @endsection

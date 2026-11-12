@@ -60,6 +60,12 @@
                     <span>Orders</span>
                 </a>
 
+                <a href="{{ route('admin.users.index') }}"
+                    class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                    <span class="nav-icon" aria-hidden="true">◎</span>
+                    <span>Users</span>
+                </a>
+
             </nav>
 
             <div class="sidebar-bottom">
