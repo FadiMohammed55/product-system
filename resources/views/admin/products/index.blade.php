@@ -156,7 +156,8 @@
                                 <td>
                                     <div class="product-cell">
                                         @if ($product->image)
-                                            <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="product-image">
+                                            <img src="{{ str_starts_with($product->image, 'uploads/') ? asset($product->image) : asset('storage/' . $product->image) }}"
+                                                alt="{{ $product->name }}" class="product-image">
                                         @else
                                             <div class="product-placeholder" aria-hidden="true">
                                                 📦

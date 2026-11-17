@@ -55,7 +55,8 @@
                     <div class="customer-product-image">
 
                         @if ($product->image)
-                            <img src="{{ asset($product->image) }}" alt="{{ $product->name }}">
+                            <img src="{{ str_starts_with($product->image, 'uploads/') ? asset($product->image) : asset('storage/' . $product->image) }}"
+                                alt="{{ $product->name }}">
                         @else
                             <div class="customer-no-image">
                                 No Image

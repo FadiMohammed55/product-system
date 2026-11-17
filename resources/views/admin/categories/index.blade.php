@@ -33,9 +33,36 @@
         </div>
     @endif
 
-    @if ($categories->count())
+    {{-- Search and categories Count --}}
+    <div class="table-card">
 
-        <div class="table-card">
+        <div class="table-header">
+
+            <div>
+                <h2>All Categories</h2>
+                <p>{{ $categories->total() }} categories found</p>
+            </div>
+
+            <form action="{{ route('admin.categories.index') }}" method="get" class="search-form">
+
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search categories..."
+                    aria-label="Search categories">
+
+                <button type="submit" class="btn btn-primary">
+                    Search
+                </button>
+
+                @if (request('search'))
+                    <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
+                        Clear
+                    </a>
+                @endif
+
+            </form>
+
+        </div>
+
+        @if ($categories->count())
 
             <div class="table-wrapper">
 
@@ -46,6 +73,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Category</th>
+                            <th>Products</th>
                             <th>Actions</th>
                         </tr>
 
@@ -63,16 +91,18 @@
                                 </td>
                                 <td>
                                     <div class="category-table-cell">
-
                                         <div class="category-icon" aria-hidden="true">
                                             ▤
                                         </div>
-
                                         <div class="category-info">
                                             <strong>{{ $category->name }}</strong>
                                         </div>
-
                                     </div>
+                                </td>
+                                <td>
+                                    <span class="badge">
+                                        {{ $category->products_count }}
+                                    </span>
                                 </td>
                                 <td>
                                     <div class="table-actions">
@@ -100,11 +130,12 @@
 
             </div>
 
-        </div>
+            {{-- Pagination --}}
+            <div class="pagination-wrapper">
+                {{ $categories->links() }}
+            </div>
 
-    @else
-
-        <div class="table-card">
+        @else
 
             <div class="empty-state">
 
@@ -112,18 +143,34 @@
                     ▤
                 </div>
 
-                <h2>No Categories Found</h2>
+                @if (request('search'))
 
-                <p>Create your first category to organize your products</p>
+                    <h2>No Matching Categories</h2>
 
-                <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
-                    Add Category
-                </a>
+                    <p>No categories found matching
+                        "{{ request('search') }}"
+                    </p>
+
+                    <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
+                        Clear Search
+                    </a>
+
+                @else
+
+                    <h2>No Categories Found</h2>
+
+                    <p>Create your first category to organize your products</p>
+
+                    <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
+                        Add Category
+                    </a>
+
+                @endif
 
             </div>
 
-        </div>
+        @endif
 
-    @endif
+    </div>
 
 @endsection

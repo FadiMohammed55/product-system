@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class AdminProductController extends Controller
 {
@@ -84,18 +85,25 @@ class AdminProductController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
+            $imagePath = $request->file('image')->store('products', 'public');
 
-            $imageName = time() . '_' . $image->getClientOriginalName();
+            if (!$imagePath) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'image' => 'The image could not be uploaded. Please try again.',
+                    ]);
+            }
 
-            $image->move(public_path('uploads/products'), $imageName);
+            $validated['image'] = $imagePath;
 
-            $validated['image'] = 'uploads/products/' . $imageName;
         }
 
         Product::create($validated);
 
-        return redirect('/admin/products');
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Product created successfully.');
     }
 
     public function edit(Product $product)
@@ -122,43 +130,49 @@ class AdminProductController extends Controller
             'stock' => 'required|integer|min:0',
         ]);
 
+        $oldImage = $product->image;
+        $newImagePath = null;
+
         if ($request->hasFile('image')) {
+            $newImagePath = $request->file('image')->store('products', 'public');
 
-            if ($product->image) {
-                $oldImage = public_path($product->image);
-
-                if (file_exists($oldImage)) {
-                    unlink($oldImage);
-                }
+            if (!$newImagePath) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'image' => 'The new image could not be uploaded. The current image was kept.',
+                    ]);
             }
 
-            $image = $request->file('image');
-
-            $imageName = time() . '_' . $image->getClientOriginalName();
-
-            $image->move(public_path('uploads/products'), $imageName);
-
-            $validated['image'] = 'uploads/products/' . $imageName;
+            $validated['image'] = $newImagePath;
 
         }
 
         $product->update($validated);
 
-        return redirect('/admin/products');
+        // Delete the old image only after the product was updated successfully.
+        if ($newImagePath && $oldImage && !str_starts_with($oldImage, 'uploads/')) {
+            Storage::disk('public')->delete($oldImage);
+        }
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Product updated successfully.');
     }
 
     public function destroy(Product $product)
     {
-        if ($product->image) {
-            $imagePath = public_path($product->image);
-
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
-            }
-        }
+        $imagePath = $product->image;
 
         $product->delete();
 
-        return redirect('/admin/products');
+        // Keep compatibility with images uploaded using the old public/uploads method.
+        if ($imagePath && !str_starts_with($imagePath, 'uploads/')) {
+            Storage::disk('public')->delete($imagePath);
+        }
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Products deleted successfully.');
     }
 }

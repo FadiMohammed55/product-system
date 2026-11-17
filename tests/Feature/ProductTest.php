@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
@@ -205,4 +207,106 @@ class ProductTest extends TestCase
             'id' => $product->id,
         ]);
     }
+
+
+    public function test_admin_can_upload_product_image(): void
+    {
+        Storage::fake('public');
+
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($admin)
+            ->post('/admin/products', [
+                'name' => 'Image Test Product',
+                'price' => 100,
+                'currency' => 'USD',
+                'rating' => 4.5,
+                'category_id' => $category->id,
+                'stock' => 10,
+                'image' => UploadedFile::fake()->image('product.jpg'),
+            ]);
+
+        $response->assertRedirect('/admin/products');
+
+        $product = Product::where('name', 'Image Test Product')->firstOrFail();
+
+        $this->assertNotNull($product->image);
+
+        $this->assertTrue(Storage::disk('public')->exists($product->image));
+    }
+
+    public function test_admin_can_replace_product_image(): void
+    {
+        Storage::fake('public');
+
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $category = Category::factory()->create();
+
+        $oldImage = UploadedFile::fake()
+            ->image('old-product.jpg')
+            ->store('products', 'public');
+
+        $product = Product::factory()->create([
+            'category_id' => $category->id,
+            'image' => $oldImage,
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->put("/admin/products/{$product->id}", [
+                'name' => $product->name,
+                'price' => $product->price,
+                'currency' => $product->currency,
+                'rating' => $product->rating,
+                'category_id' => $category->id,
+                'stock' => $product->stock,
+                'image' => UploadedFile::fake()->image('new-product.jpg'),
+            ]);
+
+        $response->assertRedirect('/admin/products');
+
+        $product->refresh();
+
+        $this->assertNotSame($oldImage, $product->image);
+
+        $this->assertFalse(Storage::disk('public')->exists($oldImage));
+        $this->assertTrue(Storage::disk('public')->exists($product->image));
+    }
+
+    public function test_deleting_product_also_deletes_its_stored_image(): void
+    {
+        Storage::fake('public');
+
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $image = UploadedFile::fake()
+            ->image('product.jpg')
+            ->store('products', 'public');
+
+        $product = Product::factory()->create([
+            'image' => $image,
+        ]);
+
+        $this->assertTrue(Storage::disk('public')->exists($image));
+
+        $response = $this->actingAs($admin)
+            ->delete("/admin/products/{$product->id}");
+
+        $response->assertRedirect('/admin/products');
+
+        $this->assertDatabaseMissing('products', [
+            'id' => $product->id,
+        ]);
+
+        $this->assertFalse(Storage::disk('public')->exists($image));
+    }
+
 }

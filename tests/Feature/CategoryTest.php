@@ -201,4 +201,109 @@ class CategoryTest extends TestCase
             'id' => $category->id,
         ]);
     }
+
+    public function test_admin_can_search_categories_by_name(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        Category::factory()->create([
+            'name' => 'Electronics'
+        ]);
+        Category::factory()->create([
+            'name' => 'Books'
+        ]);
+        Category::factory()->create([
+            'name' => 'Clothing'
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->get('/admin/categories?search=Electronics');
+
+        $response->assertOk();
+        $response->assertSee('Electronics');
+        $response->assertDontSee('Books');
+        $response->assertDontSee('Clothing');
+    }
+
+    public function test_categories_display_their_product_count(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $category = Category::factory()->create([
+            'name' => 'Electronics',
+        ]);
+
+        Product::factory()->count(3)->create([
+            'category_id' => $category->id,
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->get('/admin/categories');
+
+        $response->assertOk();
+
+        $response->assertViewHas('categories', function ($categories) use ($category) {
+            $foundCategory = $categories->firstWhere('id', $category->id);
+
+            return $foundCategory !== null && $foundCategory->products_count === 3;
+        });
+    }
+
+    public function test_categories_are_paginated(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        for ($i = 1; $i <= 12; $i++) {
+            Category::factory()->create([
+                'name' => "Category {$i}",
+            ]);
+        }
+
+        $response = $this->actingAs($admin)
+            ->get('/admin/categories');
+
+        $response->assertOk();
+
+        $response->assertViewHas('categories', function ($categories) {
+            return $categories->total() === 12
+                && $categories->count() === 10
+                && $categories->perPage() === 10;
+        });
+    }
+
+    public function test_category_search_is_preserved_during_pagination(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        for ($i = 1; $i <= 12; $i++) {
+            Category::factory()->create([
+                'name' => "Electronics {$i}",
+            ]);
+        }
+
+        Category::factory()->create([
+            'name' => 'Clothing',
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->get('/admin/categories?search=Electronics&page=2');
+
+        $response->assertOk();
+
+        $response->assertViewHas('categories', function ($categories) {
+            return $categories->total() === 12
+                && $categories->count() === 2
+                && $categories->currentPage() === 2;
+        });
+
+        $response->assertSee('search=Electronics', false);
+    }
 }

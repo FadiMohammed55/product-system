@@ -171,7 +171,8 @@
 
                         @if ($product->image)
 
-                            <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="current-product-image">
+                            <img src="{{ str_starts_with($product->image, 'uploads/') ? asset($product->image) : asset('storage/' . $product->image) }}"
+                                alt="{{ $product->name }}" class="current-product-image">
 
                             <div class="current-image-info">
                                 <strong>Current product image</strong>

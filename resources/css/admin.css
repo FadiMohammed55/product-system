@@ -1642,7 +1642,7 @@ textarea:focus-visible {
     }
 
     .product-filter-actions {
-        grid: 1 / -1;
+        grid-column: 1 / -1;
     }
 }
 
@@ -1767,6 +1767,21 @@ textarea:focus-visible {
     .user-info-list {
         grid-template-columns: 1fr;
     }
+
+    .table-header {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .search-form {
+        width: 100%;
+    }
+
+    .search-form input {
+        flex: 1;
+        width: auto;
+    }
 }
 
 /*==============================
@@ -1854,6 +1869,20 @@ textarea:focus-visible {
     .current-image-box {
         flex-direction: column;
     }
+
+    .search-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .search-form input {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    .search-form .btn {
+        width: 100%;
+    }
 }
 
 /*==============================
@@ -1865,7 +1894,9 @@ textarea:focus-visible {
 
 .product-filters-form {
     display: grid;
-    grid-template-columns: minmax(180px, 1.5fr) repeat(3, minmax(140px, 1fr)) auto;
+    grid-template-columns:
+        minmax(180px, 1.5fr) repeat(3, minmax(140px, 1fr))
+        auto;
     align-items: end;
     gap: 14px;
     padding: 20px;
@@ -1894,4 +1925,90 @@ textarea:focus-visible {
     border-bottom: 1px solid var(--border);
     color: var(--text-muted);
     font-size: 12px;
+}
+
+/*==============================
+   40. CATEGORY SEARCH & TABLE
+==============================*/
+.table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.table-header h2 {
+    margin-bottom: 4px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.table-header p {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* Search */
+.search-form {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+}
+
+.search-form input {
+    width: 240px;
+    max-width: 100%;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 12px;
+    transition:
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+.search-form input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-form input:focus {
+    border-color: var(--blue-light);
+    box-shadow: 0 0 0 3px var(--blue-soft);
+}
+
+.search-form .btn {
+    min-height: 38px;
+    white-space: nowrap;
+}
+
+/* Product count badge */
+.table-card .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    padding: 5px 10px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 20px;
+    background: var(--blue-soft);
+    color: #60a5fa;
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Category table alignment */
+.table-card table th,
+.table-card table td {
+    vertical-align: middle;
 }
