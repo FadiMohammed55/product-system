@@ -6,6 +6,8 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class OrderTest extends TestCase
@@ -182,5 +184,48 @@ class OrderTest extends TestCase
             ->get('/admin/orders');
 
         $response->assertStatus(403);
+    }
+
+    public function test_admin_can_view_product_image_in_order_details(): void
+    {
+        Storage::fake('public');
+
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $imagePath = UploadedFile::fake()
+            ->image('product.jpg')
+            ->store('products', 'public');
+
+        $product = Product::factory()->create([
+            'name' => 'Test Product',
+            'image' => $imagePath,
+        ]);
+
+        $order = Order::factory()->create();
+
+        $order->items()->create([
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'quantity' => 2,
+            'price' => $product->price,
+            'currency' => $product->currency,
+            'converted_price' => $product->price,
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->get("/admin/orders/{$order->id}");
+
+        $response->assertOk();
+
+        $response->assertSee('Test Product');
+
+        $response->assertSee(
+            Storage::disk('public')->url($imagePath),
+            false
+        );
+
+        Storage::disk('public')->assertExists($imagePath);
     }
 }

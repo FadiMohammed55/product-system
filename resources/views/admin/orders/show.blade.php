@@ -95,8 +95,13 @@
                                     <div class="product-cell">
                                         @if ($item->product)
                                             @if ($item->product->image)
-                                                <img src="{{ asset($item->product->image) }}" alt="{{ $item->product->name }}"
-                                                    class="product-image">
+                                                @php
+                                                    $imagePath = $item->product->image;
+                                                    $imageUrl = str_starts_with($imagePath, 'uploads/')
+                                                        ? asset($imagePath)
+                                                        : \Illuminate\Support\Facades\Storage::disk('public')->url($imagePath);
+                                                @endphp
+                                                <img src="{{ $imageUrl }}" alt="{{ $item->product->name }}" class="product-image">
                                             @else
                                                 <div class="product-placeholder" aria-hidden="true">
                                                     📦
