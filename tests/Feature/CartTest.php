@@ -291,4 +291,59 @@ class CartTest extends TestCase
         $response->assertSee('330.00');
         $response->assertSee('USD');
     }
+
+    public function test_customer_cannot_add_out_of_stock_product(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+        ]);
+
+        $product = Product::factory()->create([
+            'stock' => 0,
+        ]);
+
+        $response = $this->actingAs($customer)
+            ->post("/cart/{$product->id}");
+
+        $response->assertRedirect('/products');
+
+        $response->assertSessionHas(
+            'error',
+            'This product is out of stock or the requested quantity is not available.'
+        );
+
+        $response->assertSessionMissing('cart');
+    }
+
+    public function test_customer_cannot_update_quantity_beyond_available_stock(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+        ]);
+
+        $product = Product::factory()->create([
+            'stock' => 5,
+        ]);
+
+        $response = $this->actingAs($customer)
+            ->withSession([
+                'cart' => [
+                    $product->id => 2,
+                ],
+            ])
+            ->patch("/cart/{$product->id}", [
+                'quantity' => 6,
+            ]);
+
+        $response->assertRedirect('/cart');
+
+        $response->assertSessionHas(
+            'error',
+            'Requested quantity is greater than available stock.'
+        );
+
+        $response->assertSessionHas('cart', [
+            $product->id => 2,
+        ]);
+    }
 }

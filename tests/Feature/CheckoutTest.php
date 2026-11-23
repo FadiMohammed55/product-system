@@ -611,4 +611,67 @@ class CheckoutTest extends TestCase
 
         $response->assertSessionMissing('cart');
     }
+
+
+    public function test_checkout_rolls_back_all_changes_when_one_product_has_insufficient_stock(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+        ]);
+
+        $availableProduct = Product::factory()->create([
+            'name' => 'iPhone',
+            'price' => 100,
+            'stock' => 10,
+        ]);
+
+        $unavailableProduct = Product::factory()->create([
+            'name' => 'MacBook',
+            'price' => 500,
+            'stock' => 2,
+        ]);
+
+        $response = $this->actingAs($customer)
+            ->withSession([
+                'cart' => [
+                    $availableProduct->id => 2,
+                    $unavailableProduct->id => 5,
+                ],
+            ])
+            ->post('/checkout');
+
+        // Checkout should fail.
+        $response->assertRedirect('/cart');
+
+        $response->assertSessionHas(
+            'error',
+            "Insufficient stock for product: {$unavailableProduct->name}"
+        );
+
+        // No order should be created.
+        $this->assertDatabaseCount('orders', 0);
+
+        $this->assertDatabaseCount('order_items', 0);
+
+        // Both products should keep their original stock.
+        $this->assertDatabaseHas('products', [
+            'id' => $availableProduct->id,
+            'stock' => 10,
+        ]);
+
+        $this->assertDatabaseHas('products', [
+            'id' => $unavailableProduct->id,
+            'stock' => 2,
+        ]);
+
+        // The cart should remain unchanged.
+        $this->assertSame(
+            [
+                $availableProduct->id => 2,
+                $unavailableProduct->id => 5,
+            ],
+            session('cart')
+        );
+    }
+
 }

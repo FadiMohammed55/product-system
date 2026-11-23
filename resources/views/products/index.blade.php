@@ -117,7 +117,7 @@
                                 alt="{{ $product->name }}">
                         @else
                             <div class="customer-no-image">
-                                Np Image
+                                No Image
                             </div>
                         @endif
 
