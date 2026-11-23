@@ -30,6 +30,64 @@
         </div>
     @endif
 
+    {{-- Search and Filters --}}
+    <form action="{{ route('products.index') }}" method="get" class="product-filters">
+
+        <div class="filter-group">
+            <label for="search">Search Products</label>
+            <input type="text" name="search" id="search" value="{{ request('search') }}"
+                placeholder="Search by product name...">
+        </div>
+
+        <div class="filter-group">
+            <label for="category_id">Category</label>
+            <select name="category_id" id="category_id">
+                <option value="">All Categories</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="currency">Currency</label>
+            <select name="currency" id="currency">
+                <option value="">All Currencies</option>
+                @foreach ($currencies as $currency)
+                    <option value="{{ $currency }}" @selected(request('currency') == $currency)>
+                        {{ $currency }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="sort">Sort By Price</label>
+            <select name="sort" id="sort">
+                <option value="">Default</option>
+                <option value="price_asc" @selected(request('sort') === 'price_asc')>
+                    Price: Low to High
+                </option>
+                <option value="price_desc" @selected(request('sort') === 'price_desc')>
+                    Price: High to Low
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="store-btn store-btn-primary">
+                Apply Filter
+            </button>
+            <a href="{{ route('products.index') }}" class="store-btn store-btn-secondary">
+                Clear Filters
+            </a>
+        </div>
+
+    </form>
+
+    {{-- Products --}}
     @if ($products->isEmpty())
 
         <div class="customer-empty-state">
@@ -38,9 +96,9 @@
                 📦
             </div>
 
-            <h2>No Products Available</h2>
+            <h2>No Products Found</h2>
 
-            <p>There are currently no products to display</p>
+            <p>Try changing your search or filter options</p>
 
         </div>
 
@@ -59,7 +117,7 @@
                                 alt="{{ $product->name }}">
                         @else
                             <div class="customer-no-image">
-                                No Image
+                                Np Image
                             </div>
                         @endif
 
@@ -87,23 +145,17 @@
                         <div class="product-stock">
 
                             @if ($product->stock === 0)
-
                                 <span class="customer-stock customer-stock-out">
                                     Out of Stock
                                 </span>
-
                             @elseif ($product->stock <= 5)
-
                                 <span class="customer-stock customer-stock-low">
                                     Only {{ $product->stock }} left
                                 </span>
-
                             @else
-
                                 <span class="customer-stock customer-stock-available">
                                     {{ $product->stock }} available
                                 </span>
-
                             @endif
 
                         </div>
@@ -134,6 +186,11 @@
 
             @endforeach
 
+        </div>
+
+        {{-- Pagination --}}
+        <div class="product-pagination">
+            {{ $products->links() }}
         </div>
 
     @endif
